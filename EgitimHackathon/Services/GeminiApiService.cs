@@ -1,6 +1,7 @@
 ﻿using EgitimMaskotuApp.Models;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace EgitimMaskotuApp.Services
 {
@@ -61,28 +62,42 @@ namespace EgitimMaskotuApp.Services
             }
         }
 
-        // Münazara konusu analizi
+        // Münazara konusu analizi - İyileştirilmiş parsing
         public async Task<(string konu, string kullaniciTarafi, string aiTarafi)> AnalyzeMunazaraTopicAsync(string rawTopic)
         {
             var prompt = $@"
 Kullanıcı şu münazara konusunu verdi: '{rawTopic}'
 
-Lütfen bu konuyu analiz et ve şu formatla yanıt ver:
+Lütfen bu konuyu analiz et ve MUTLAKA şu formatla yanıt ver:
 KONU: [net ve anlaşılır münazara konusu]
 KULLANICI_TARAFI: [kullanıcının savunacağı taraf]
 AI_TARAFI: [AI'ın savunacağı karşıt taraf]
 
+ÖNEMLI: Her satır yukarıdaki etiketlerle başlamalı. Ek açıklama yapma, sadece bu formatı kullan.
+
 Konuyu Türkçe eğitim seviyesine uygun hale getir ve her iki taraf için de mantıklı argümanlar bulunabilecek şekilde düzenle.
 Eğer kullanıcı tarafları belirtmişse onları kullan, belirtmemişse sen belirle.
+
+Örnek:
+KONU: Sosyal medyanın gençler üzerindeki etkisi
+KULLANICI_TARAFI: Sosyal medya gençlere faydalıdır
+AI_TARAFI: Sosyal medya gençlere zararlıdır
 ";
 
             var response = await SendRequestAsync(prompt);
 
-            // Yanıtı parse et
-            var lines = response.Split('\n');
-            var konu = ExtractValue(lines, "KONU:");
-            var kullaniciTarafi = ExtractValue(lines, "KULLANICI_TARAFI:");
-            var aiTarafi = ExtractValue(lines, "AI_TARAFI:");
+            // İyileştirilmiş parsing
+            var konu = ExtractValueImproved(response, "KONU:");
+            var kullaniciTarafi = ExtractValueImproved(response, "KULLANICI_TARAFI:");
+            var aiTarafi = ExtractValueImproved(response, "AI_TARAFI:");
+
+            // Eğer parsing başarısız olursa varsayılan değerler
+            if (string.IsNullOrWhiteSpace(konu))
+                konu = rawTopic;
+            if (string.IsNullOrWhiteSpace(kullaniciTarafi))
+                kullaniciTarafi = "Destekleyici taraf";
+            if (string.IsNullOrWhiteSpace(aiTarafi))
+                aiTarafi = "Karşı taraf";
 
             return (konu, kullaniciTarafi, aiTarafi);
         }
@@ -117,7 +132,7 @@ Yanıtın:
             return await SendRequestAsync(prompt);
         }
 
-        // Münazara sonucu değerlendirmesi
+        // Münazara sonucu değerlendirmesi - İyileştirilmiş parsing
         public async Task<MunazaraResult> EvaluateMunazaraAsync(MunazaraSession session)
         {
             var conversationHistory = string.Join("\n", session.Messages.Select(m =>
@@ -133,31 +148,65 @@ AI tarafı: {session.AiTarafi}
 Konuşma:
 {conversationHistory}
 
-Lütfen şu formatla değerlendirme yap:
+Lütfen MUTLAKA şu formatla değerlendirme yap:
 KAZANAN: [Kullanıcı veya AI]
 PUAN: [0-100 arası kullanıcı puanı]
 İYİ_YANLAR: [kullanıcının güçlü argümanları, virgülle ayırarak]
 KÖTÜ_YANLAR: [kullanıcının zayıf noktaları, virgülle ayırarak]
 DETAYLI_ANALIZ: [kapsamlı değerlendirme]
 
-Değerlendirme kriterleri:
-- Argüman gücü
-- Mantıksal tutarlılık  
-- Karşı argümanlara yanıt verme
-- İkna edicilik
-- Bilgi doğruluğu
+ÖNEMLI: Her satır yukarıdaki etiketlerle başlamalı. Ek açıklama yapma.
+
+DEĞERLENDİRME KRİTERLERİ VE PUANLAMA:
+Değerlendirmeni 100 puan üzerinden aşağıdaki rubriğe göre yap:
+
+1.  **Argüman Yapılandırması ve Gücü (30 Puan):**
+    * Kullanıcının argümanları net bir ""İddia"", onu destekleyen ""Veri/Kanıt"" ve ikisi arasındaki mantıksal ""Gerekçe"" üçlüsünü içeriyor mu? Argümanlar ne kadar güçlü ve iyi yapılandırılmış?
+
+2.  **Çürütme ve Etkileşim (25 Puan):**
+    * Kullanıcı, yapay zekanın argümanlarına doğrudan yanıt veriyor mu? Karşı argümanları doğru bir şekilde özetleyip, mantık ve kanıtla etkili bir şekilde çürütüyor mu? Fikir çatışması yaratabiliyor mu?
+
+3.  **Kanıt Kalitesi ve Bilgi Doğruluğu (20 Puan):**
+    * Kullanıcının sunduğu kanıtlar (veriler, örnekler) ne kadar güvenilir, ilgili ve doğru? Bilgiyi argümanını desteklemek için doğru kullanıyor mu?
+
+4.  **Mantıksal Tutarlılık ve Safsata Kontrolü (15 Puan):**
+    * Kullanıcının argümanları kendi içinde tutarlı mı? Konuşmasının genelinde mantık hataları (ad hominem, korkuluk safsatası vb.) var mı?
+
+5.  **Sunum ve İkna Edicilik (10 Puan):**
+    * Kullanıcı kendini ne kadar açık, net ve yapılandırılmış bir dille ifade ediyor? Dil kullanımı mantıksal ikna gücünü artırıyor mu?
+
+Örnek:
+KAZANAN: Kullanıcı
+PUAN: 75
+İYİ_YANLAR: Güçlü argümanlar, mantıklı yaklaşım, iyi örnekler
+KÖTÜ_YANLAR: Zayıf karşı çıkışlar, yetersiz kanıt
+DETAYLI_ANALIZ: Kullanıcı konuyu iyi savundu...
 ";
 
             var response = await SendRequestAsync(prompt);
 
-            return new MunazaraResult
+            var result = new MunazaraResult
             {
-                Winner = ExtractValue(response.Split('\n'), "KAZANAN:"),
-                UserScore = int.TryParse(ExtractValue(response.Split('\n'), "PUAN:"), out int score) ? score : 50,
-                GoodPoints = ExtractValue(response.Split('\n'), "İYİ_YANLAR:").Split(',').Select(s => s.Trim()).ToList(),
-                BadPoints = ExtractValue(response.Split('\n'), "KÖTÜ_YANLAR:").Split(',').Select(s => s.Trim()).ToList(),
-                DetailedAnalysis = ExtractValue(response.Split('\n'), "DETAYLI_ANALIZ:")
+                Winner = ExtractValueImproved(response, "KAZANAN:"),
+                UserScore = ExtractScoreImproved(response, "PUAN:"),
+                GoodPoints = ExtractListImproved(response, "İYİ_YANLAR:"),
+                BadPoints = ExtractListImproved(response, "KÖTÜ_YANLAR:"),
+                DetailedAnalysis = ExtractValueImproved(response, "DETAYLI_ANALIZ:")
             };
+
+            // Varsayılan değerler
+            if (string.IsNullOrWhiteSpace(result.Winner))
+                result.Winner = "Berabere";
+            if (result.UserScore == 0)
+                result.UserScore = 50;
+            if (!result.GoodPoints.Any())
+                result.GoodPoints.Add("Münazaraya katılım gösterdiniz");
+            if (!result.BadPoints.Any())
+                result.BadPoints.Add("Daha güçlü argümanlar geliştirebilirsiniz");
+            if (string.IsNullOrWhiteSpace(result.DetailedAnalysis))
+                result.DetailedAnalysis = "İyi bir münazara performansı sergiledינiz.";
+
+            return result;
         }
 
         // Sokratik öğretim için ilk soru
@@ -207,26 +256,61 @@ Son soru: {session.QAHistory.LastOrDefault()?.Question}
 3. Eğer öğrenci doğru cevap verdiyse:
    - Tebrik et ve konuyu derinleştiren soru sor
 
-Lütfen şu formatla yanıt ver:
-GERİ_BİLDİRİM: [öğrencinin cevabına yapıcı geri bildirim. Bilmiyorsa açıklama yap, yanlışsa düzelt, doğruysa tebrik et]
-SONRAKİ_SORU: [bir sonraki Sokratik soru. Açıklama yaptıysan o konuyu pekiştirecek soru sor]
+Lütfen MUTLAKA şu formatla yanıt ver:
+GERİ_BİLDİRİM: [öğrencinin cevabına yapıcı geri bildirim]
+SONRAKİ_SORU: [bir sonraki Sokratik soru]
 
 Eğer konu yeterince işlendiyse SONRAKİ_SORU kısmına 'BİTTİ' yaz.
 ";
 
             var response = await SendRequestAsync(prompt);
-            var lines = response.Split('\n');
 
-            var feedback = ExtractValue(lines, "GERİ_BİLDİRİM:");
-            var nextQuestion = ExtractValue(lines, "SONRAKİ_SORU:");
+            var feedback = ExtractValueImproved(response, "GERİ_BİLDİRİM:");
+            var nextQuestion = ExtractValueImproved(response, "SONRAKİ_SORU:");
 
             return (nextQuestion, feedback);
         }
 
-        private string ExtractValue(string[] lines, string prefix)
+        private string ExtractValueImproved(string text, string prefix)
         {
-            var line = lines.FirstOrDefault(l => l.StartsWith(prefix));
-            return line?.Substring(prefix.Length).Trim() ?? "";
+            if (string.IsNullOrWhiteSpace(text) || string.IsNullOrWhiteSpace(prefix))
+                return "";
+
+            // Düzeltilmiş Regex: Sadece etiketten sonra aynı satır sonuna kadar olan kısmı alır.
+            // Bu, API'nin formatlama farklılıklarına karşı daha dayanıklıdır.
+            var pattern = $@"^{Regex.Escape(prefix)}\s*(.*)";
+            var match = Regex.Match(text, pattern, RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+            if (match.Success)
+            {
+                return match.Groups[1].Value.Trim();
+            }
+
+            return ""; // Eşleşme bulunamazsa boş string dön.
+        }
+
+        private int ExtractScoreImproved(string text, string prefix)
+        {
+            var scoreText = ExtractValueImproved(text, prefix);
+            if (int.TryParse(scoreText, out int score))
+            {
+                // Puanın 0-100 aralığında kalmasını garantile
+                return Math.Max(0, Math.Min(100, score));
+            }
+            // Puan ayrıştırılamazsa 0 döndür. Bu, bir hata olduğunu gösterir.
+            return 0;
+        }
+
+        private List<string> ExtractListImproved(string text, string prefix)
+        {
+            var listText = ExtractValueImproved(text, prefix);
+            if (string.IsNullOrWhiteSpace(listText))
+                return new List<string>();
+
+            return listText.Split(',')
+                           .Select(s => s.Trim())
+                           .Where(s => !string.IsNullOrWhiteSpace(s))
+                           .ToList();
         }
     }
 }

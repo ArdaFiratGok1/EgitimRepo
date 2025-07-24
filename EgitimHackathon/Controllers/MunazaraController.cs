@@ -76,9 +76,9 @@ namespace EgitimMaskotuApp.Controllers
 
             var session = JsonSerializer.Deserialize<MunazaraSession>(sessionJson);
 
-            if (!session.IsActive || session.TurnCount >= session.MaxTurns)
+            if (!session.IsActive)
             {
-                return RedirectToAction("Result");
+                return View("Chat", new MunazaraChatViewModel { Session = session });
             }
 
             try
@@ -92,15 +92,7 @@ namespace EgitimMaskotuApp.Controllers
 
                 session.TurnCount++;
 
-                // Eğer maksimum turn sayısına ulaştıysak münazarayı bitir
-                if (session.TurnCount >= session.MaxTurns)
-                {
-                    session.IsActive = false;
-                    HttpContext.Session.SetString("MunazaraSession", JsonSerializer.Serialize(session));
-                    return RedirectToAction("Result");
-                }
-
-                // AI yanıtı al
+                // AI yanıtı al (münazara bitmeden önce)
                 var aiResponse = await _geminiService.GenerateMunazaraResponseAsync(session, message);
 
                 // AI yanıtını ekle
@@ -112,17 +104,16 @@ namespace EgitimMaskotuApp.Controllers
 
                 session.TurnCount++;
 
-                // Session'ı güncelle
-                HttpContext.Session.SetString("MunazaraSession", JsonSerializer.Serialize(session));
-
                 // Eğer maksimum turn sayısına ulaştıysak münazarayı bitir
                 if (session.TurnCount >= session.MaxTurns)
                 {
                     session.IsActive = false;
-                    HttpContext.Session.SetString("MunazaraSession", JsonSerializer.Serialize(session));
-                    return RedirectToAction("Result");
                 }
 
+                // Session'ı güncelle
+                HttpContext.Session.SetString("MunazaraSession", JsonSerializer.Serialize(session));
+
+                // Chat sayfasını göster (münazara bitmiş olsa bile, kullanıcı son yanıtı okuyabilsin)
                 return View("Chat", new MunazaraChatViewModel { Session = session });
             }
             catch (Exception ex)
@@ -130,6 +121,43 @@ namespace EgitimMaskotuApp.Controllers
                 ModelState.AddModelError("", "Mesaj gönderilirken hata oluştu: " + ex.Message);
                 return View("Chat", new MunazaraChatViewModel { Session = session });
             }
+        }
+
+        // Münazarayı bitir butonuna basıldığında
+        [HttpPost]
+        public IActionResult FinishMunazara()
+        {
+            var sessionJson = HttpContext.Session.GetString("MunazaraSession");
+            if (string.IsNullOrEmpty(sessionJson))
+            {
+                return RedirectToAction("Index");
+            }
+
+            var session = JsonSerializer.Deserialize<MunazaraSession>(sessionJson);
+            session.IsActive = false;
+            HttpContext.Session.SetString("MunazaraSession", JsonSerializer.Serialize(session));
+            
+            return View("Finished", new MunazaraChatViewModel { Session = session });
+        }
+
+        // Yeni action: Münazara bitişini göster
+        public IActionResult Finished()
+        {
+            var sessionJson = HttpContext.Session.GetString("MunazaraSession");
+            if (string.IsNullOrEmpty(sessionJson))
+            {
+                return RedirectToAction("Index");
+            }
+
+            var session = JsonSerializer.Deserialize<MunazaraSession>(sessionJson);
+            return View(new MunazaraChatViewModel { Session = session });
+        }
+
+        // Sonuç sayfasına gitme action'ı
+        [HttpPost]
+        public IActionResult GoToResult()
+        {
+            return RedirectToAction("Result");
         }
 
         public async Task<IActionResult> Result()

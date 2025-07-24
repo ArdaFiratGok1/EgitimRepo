@@ -11,12 +11,12 @@
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public int TurnCount { get; set; } = 0;
-        public int MaxTurns { get; set; } = 6; // 3'er mesaj
+        public int MaxTurns { get; set; } = 6; // 3'er mesaj olacagı içni
     }
 
     public class MunazaraMessage
     {
-        public string Speaker { get; set; } // "user" veya "ai"
+        public string Speaker { get; set; } //Kullanıcı veya Gemini
         public string Content { get; set; }
         public DateTime Timestamp { get; set; } = DateTime.Now;
     }

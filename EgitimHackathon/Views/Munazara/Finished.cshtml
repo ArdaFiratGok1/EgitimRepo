@@ -1,0 +1,120 @@
+﻿@model EgitimMaskotuApp.Models.MunazaraChatViewModel
+
+@{
+    ViewData["Title"] = "Münazara Tamamlandı";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h3><i class="fas fa-check-circle"></i> Münazara Tamamlandı!</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <h4>🎉 Tebrikler! Münazaranız başarıyla tamamlandı.</h4>
+                        <p class="text-muted">
+                            <strong>Konu:</strong> @Model.Session.Konu<br>
+                            <strong>Sizin Tarafınız:</strong> @Model.Session.KullaniciTarafi<br>
+                            <strong>AI'ın Tarafı:</strong> @Model.Session.AiTarafi
+                        </p>
+                    </div>
+
+                    <!-- Münazara Özeti -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5><i class="fas fa-comments"></i> Münazara Özeti</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 text-center">
+                                    <div class="stat-box">
+                                        <h3 class="text-primary">@Model.Session.Messages.Count</h3>
+                                        <p class="mb-0">Toplam Mesaj</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="stat-box">
+                                        <h3 class="text-success">@(Model.Session.Messages.Count(m => m.Speaker == "user"))</h3>
+                                        <p class="mb-0">Sizin Mesajlarınız</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="stat-box">
+                                        <h3 class="text-info">@((DateTime.Now - Model.Session.CreatedAt).Minutes)</h3>
+                                        <p class="mb-0">Süre (dakika)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Son Mesajlar Özeti -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h6><i class="fas fa-history"></i> Son Mesajlar</h6>
+                        </div>
+                        <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                            @foreach (var message in Model.Session.Messages.TakeLast(4))
+                            {
+                                <div class="message-summary mb-2 p-2 rounded @(message.Speaker == "user" ? "bg-light border-left border-primary" : "bg-light border-left border-info")">
+                                    <small class="text-muted">
+                                        <strong>@(message.Speaker == "user" ? "Siz" : "AI"):</strong>
+                                    </small>
+                                    <p class="mb-0 mt-1">@message.Content</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Aksiyon Butonları -->
+                    <div class="text-center">
+                        <form method="post" action="@Url.Action("GoToResult")" class="d-inline">
+                            <button type="submit" class="btn btn-primary btn-lg me-3">
+                                <i class="fas fa-chart-bar"></i> Sonuçları Gör
+                            </button>
+                        </form>
+
+                        <a href="@Url.Action("NewMunazara")" class="btn btn-success btn-lg">
+                            <i class="fas fa-plus"></i> Yeni Münazara
+                        </a>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            Sonuç sayfasında performansınızın detaylı analizi ve puanlaması bulunmaktadır.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .stat-box {
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin: 10px 0;
+    }
+
+        .stat-box h3 {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+    .message-summary {
+        border-left-width: 4px !important;
+    }
+
+    .border-left {
+        border-left-style: solid !important;
+    }
+
+    .btn-lg {
+        padding: 12px 30px;
+        font-size: 1.1rem;
+    }
+</style>
