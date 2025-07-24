@@ -1,0 +1,348 @@
+﻿@model EgitimMaskotuApp.Models.NodeDetailViewModel
+
+@{
+    ViewData["Title"] = Model?.CurrentNode?.Title ?? "Detay";
+    var isCompleted = false;
+}
+
+@if (Model == null || Model.CurrentNode == null || Model.Session == null)
+{
+    <div class="alert alert-danger mt-4">Veriler yüklenirken bir sorun oluştu veya bu konu mevcut değil.</div>
+}
+else
+{
+    isCompleted = Model.Session.CompletedNodeIds.Contains(Model.CurrentNode.Id);
+
+    <div class="container mt-4">
+        <!-- Breadcrumb -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="@Url.Action("Dashboard")">
+                                <i class="fas fa-map-marked-alt me-1"></i>
+                                @Model.Session.MainTopic
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">@Model.CurrentNode.Category</li>
+                        <li class="breadcrumb-item active">@Model.CurrentNode.Title</li>
+                    </ol>
+                </nav>
+
+                <!-- Başlık Kartı -->
+                <div class="card shadow-lg border-0" style="background-color: @(Model.CurrentNode.Position?.Color ?? "#6c757d");">
+                    <div class="card-body text-white">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <div class="d-flex align-items-center mb-2">
+                                    @if (isCompleted)
+                                    {
+                                        <i class="fas fa-check-circle fa-2x me-3 text-light"></i>
+                                    }
+                                    else if (Model.CanAccess)
+                                    {
+                                        <i class="fas fa-play-circle fa-2x me-3 text-light"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-lock fa-2x me-3 text-light"></i>
+                                    }
+                                    <div>
+                                        <h2 class="mb-1">@Model.CurrentNode.Title</h2>
+                                        <p class="mb-0 opacity-90">@Model.CurrentNode.Category</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <span class="badge bg-white text-dark fs-6 mb-2">
+                                    <i class="fas fa-clock me-1"></i>
+                                    @Model.CurrentNode.EstimatedMinutes dakika
+                                </span>
+                                <br>
+                                <span class="badge bg-light text-dark">
+                                    <i class="fas fa-signal me-1"></i>
+                                    @Model.CurrentNode.Difficulty
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Erişim Kontrolü -->
+        @if (!Model.CanAccess)
+        {
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="alert alert-warning border-0 shadow-sm">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Bu konuya henüz erişemezsiniz!
+                        </h5>
+
+                        @if (Model.Prerequisites != null && Model.Prerequisites.Any())
+                        {
+                            <p class="mb-0">Öncelikle şu konuları tamamlamanız gerekiyor:</p>
+                            <ul class="mt-2 mb-0">
+                                @foreach (var prereq in Model.Prerequisites)
+                                {
+                                    <li>
+                                        <a href="@Url.Action("NodeDetail", new { nodeId = prereq.Id })">
+                                            @prereq.Title
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Ana İçerik -->
+        @if (Model.CanAccess)
+        {
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- AI Açıklaması -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-robot me-2"></i> AI Açıklaması</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (!string.IsNullOrEmpty(Model.CurrentNode.AIExplanation))
+                            {
+                                <div class="explanation-content" style="line-height: 1.8;">
+                                    @Html.Raw(Model.CurrentNode.AIExplanation.Replace("\n", "<br>"))
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted p-4">
+                                    <div class="spinner-border text-primary mb-3" role="status">
+                                        <span class="visually-hidden">Yükleniyor...</span>
+                                    </div>
+                                    <p>AI açıklaması hazırlanıyor...</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Video Kaynağı -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0"><i class="fab fa-youtube me-2"></i> Video Kaynağı</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (!string.IsNullOrEmpty(Model.CurrentNode.VideoUrl))
+                            {
+                                <div class="video-container mb-3">
+                                    @{
+                                        string videoId = null;
+                                        bool isYouTubeEmbed = false;
+
+                                        try
+                                        {
+                                            if (Model.CurrentNode.VideoUrl.Contains("youtube.com/watch?v="))
+                                            {
+                                                videoId = Model.CurrentNode.VideoUrl.Split("v=")[1].Split('&')[0];
+                                                isYouTubeEmbed = !string.IsNullOrEmpty(videoId);
+                                            }
+                                            else if (Model.CurrentNode.VideoUrl.Contains("youtu.be/"))
+                                            {
+                                                videoId = Model.CurrentNode.VideoUrl.Split("youtu.be/")[1].Split('?')[0];
+                                                isYouTubeEmbed = !string.IsNullOrEmpty(videoId);
+                                            }
+                                        }
+                                        catch
+                                        {
+                                            isYouTubeEmbed = false;
+                                        }
+                                    }
+
+                                    @if (isYouTubeEmbed)
+                                    {
+                                        <div class="ratio ratio-16x9 mb-3">
+                                            <iframe src="https://www.youtube.com/embed/@videoId"
+                                                    title="YouTube video player"
+                                                    frameborder="0"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    allowfullscreen>
+                                            </iframe>
+                                        </div>
+                                        <h6 class="mb-2">@(Model.CurrentNode.VideoTitle ?? "Video")</h6>
+                                        <a href="@Model.CurrentNode.VideoUrl" target="_blank" class="btn btn-danger btn-sm">
+                                            <i class="fab fa-youtube me-1"></i> YouTube'da Aç
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex align-items-center p-3 bg-light rounded">
+                                            <i class="fab fa-youtube fa-3x text-danger me-3"></i>
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-1">@(Model.CurrentNode.VideoTitle ?? "Video İçeriği")</h6>
+                                                <p class="text-muted mb-2">Bu konu hakkında önerilen video kaynağı</p>
+                                                <a href="@Model.CurrentNode.VideoUrl" target="_blank" class="btn btn-danger btn-sm">
+                                                    <i class="fas fa-external-link-alt me-1"></i> Videoyu İzle
+                                                </a>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted p-4">
+                                    <div class="spinner-border text-danger mb-3" role="status">
+                                        <span class="visually-hidden">Yükleniyor...</span>
+                                    </div>
+                                    <p>Video kaynağı hazırlanıyor...</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Makale Kaynağı -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="fas fa-newspaper me-2"></i> Makale Kaynağı</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (!string.IsNullOrEmpty(Model.CurrentNode.ArticleUrl))
+                            {
+                                <div class="d-flex align-items-center p-3 bg-light rounded">
+                                    <i class="fas fa-file-alt fa-3x text-success me-3"></i>
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">@(Model.CurrentNode.ArticleTitle ?? "Makale İçeriği")</h6>
+                                        <p class="text-muted mb-2">
+                                            <small>
+                                                <i class="fas fa-globe me-1"></i>
+                                                Kaynak: @(Model.CurrentNode.ArticleSource ?? "Web")
+                                            </small>
+                                        </p>
+                                        <a href="@Model.CurrentNode.ArticleUrl" target="_blank" class="btn btn-success btn-sm">
+                                            <i class="fas fa-external-link-alt me-1"></i> Makaleyi Oku
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted p-4">
+                                    <div class="spinner-border text-success mb-3" role="status">
+                                        <span class="visually-hidden">Yükleniyor...</span>
+                                    </div>
+                                    <p>Makale kaynağı hazırlanıyor...</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Anahtar Kelimeler -->
+                    @if (Model.CurrentNode.Keywords != null && Model.CurrentNode.Keywords.Any())
+                    {
+                        <div class="card shadow-sm border-0 mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0"><i class="fas fa-tags me-2"></i> Anahtar Kelimeler</h5>
+                            </div>
+                            <div class="card-body">
+                                @foreach (var keyword in Model.CurrentNode.Keywords)
+                                {
+                                    <span class="badge bg-primary me-2 mb-2" style="font-size: 0.9em;">
+                                        @keyword
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Yan Panel -->
+                <div class="col-lg-4">
+                    <!-- İlerleme Durumu -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-secondary text-white">
+                            <h6 class="mb-0"><i class="fas fa-chart-line me-2"></i> İlerleme</h6>
+                        </div>
+                        <div class="card-body text-center">
+                            @if (isCompleted)
+                            {
+                                <i class="fas fa-check-circle fa-3x text-success mb-2"></i>
+                                <h6 class="text-success">Tamamlandı!</h6>
+                                <small class="text-muted">Bu konuyu başarıyla tamamladınız.</small>
+                            }
+                            else
+                            {
+                                <i class="fas fa-play-circle fa-3x text-primary mb-2"></i>
+                                <h6 class="text-primary">Öğrenmeye Başlayın</h6>
+                                <form method="post" action="@Url.Action("CompleteNode")">
+                                    <input type="hidden" name="nodeId" value="@Model.CurrentNode.Id" />
+                                    <button type="submit" class="btn btn-success btn-sm mt-2">
+                                        <i class="fas fa-check me-1"></i> Tamamlandı Olarak İşaretle
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Sonraki Konular -->
+                    @if (Model.NextNodes != null && Model.NextNodes.Any())
+                    {
+                        <div class="card shadow-sm border-0 mb-4">
+                            <div class="card-header bg-warning text-dark">
+                                <h6 class="mb-0"><i class="fas fa-arrow-right me-2"></i> Sonraki Konular</h6>
+                            </div>
+                            <div class="card-body">
+                                @foreach (var nextNode in Model.NextNodes)
+                                {
+                                    <div class="d-flex align-items-center mb-2 p-2 bg-light rounded">
+                                        <i class="fas fa-arrow-right text-warning me-2"></i>
+                                        <div class="flex-grow-1">
+                                            <small class="fw-bold">@nextNode.Title</small>
+                                            <br>
+                                            <small class="text-muted">@nextNode.Category</small>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Geri Dön Butonu -->
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body text-center">
+                            <a href="@Url.Action("Dashboard")" class="btn btn-outline-primary">
+                                <i class="fas fa-arrow-left me-1"></i> Yol Haritasına Dön
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<style>
+    .explanation-content {
+        font-size: 1.1em;
+        text-align: justify;
+    }
+
+    .video-container iframe {
+        border-radius: 8px;
+    }
+
+    .badge {
+        border-radius: 20px;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+
+    .card-header {
+        border-radius: 12px 12px 0 0 !important;
+    }
+</style>

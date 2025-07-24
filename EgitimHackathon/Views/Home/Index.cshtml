@@ -1,108 +1,459 @@
 ﻿@{
-    ViewData["Title"] = "Ana Sayfa";
+    ViewData["Title"] = "Eğitim Maskotu - AI Destekli Öğrenme Platformu";
 }
 
-<div class="mascot-header text-center mb-5">
+<div class="hero-section">
     <div class="container">
-        <h1 class="display-4 mb-3">
-            <i class="fas fa-robot me-3"></i>
-            Eğitim Maskotuna Hoş Geldiniz!
-        </h1>
-        <p class="lead">Yapay zeka destekli öğrenme deneyiminiz burada başlıyor</p>
-    </div>
-</div>
-
-<div class="container">
-    <div class="row mb-5">
-        <div class="col-md-6 mb-4">
-            <div class="card mode-card">
-                <div class="card-body text-center p-4">
-                    <div class="mb-4">
-                        <i class="fas fa-comments fa-4x text-primary"></i>
-                    </div>
-                    <h3 class="card-title mb-3">Öğretici Münazara</h3>
-                    <p class="card-text mb-4">
-                        Seçtiğiniz konularda yapay zeka ile münazara yapın. Argümantasyon becerilerinizi geliştirin
-                        ve farklı bakış açılarını keşfedin. Her münazara sonunda detaylı geri bildirim alın.
-                    </p>
-                    <div class="mb-3">
-                        <small class="text-muted">
-                            <i class="fas fa-clock me-1"></i>Ortalama 10-15 dakika
-                        </small>
-                    </div>
-                    <a href="@Url.Action("Index", "Munazara")" class="btn btn-primary-custom">
-                        <i class="fas fa-play me-2"></i>Münazara Başlat
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6 mb-4">
-            <div class="card mode-card">
-                <div class="card-body text-center p-4">
-                    <div class="mb-4">
-                        <i class="fas fa-question-circle fa-4x text-success"></i>
-                    </div>
-                    <h3 class="card-title mb-3">Sokratik Öğretim</h3>
-                    <p class="card-text mb-4">
-                        Konularınızı Sokratik yöntemle öğrenin. Yapay zeka öğretmeniniz size sorular sorarak
-                        bilginizi pekiştirir ve eksik noktalarınızı keşfetmenize yardımcı olur.
-                    </p>
-                    <div class="mb-3">
-                        <small class="text-muted">
-                            <i class="fas fa-clock me-1"></i>Ortalama 15-20 dakika
-                        </small>
-                    </div>
-                    <a href="@Url.Action("Index", "Sokratik")" class="btn btn-success">
-                        <i class="fas fa-graduation-cap me-2"></i>Öğrenmeye Başla
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-12">
-            <div class="card border-0" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
-                <div class="card-body text-center p-5">
-                    <h2 class="mb-4">
-                        <i class="fas fa-lightbulb me-3"></i>
-                        Nasıl Çalışır?
-                    </h2>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <i class="fas fa-edit fa-2x mb-3"></i>
-                            <h5>1. Konu Seçin</h5>
-                            <p>İlgilendiğiniz konuyu yazın ve modunuzu belirleyin</p>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <i class="fas fa-robot fa-2x mb-3"></i>
-                            <h5>2. AI ile Etkileşim</h5>
-                            <p>Yapay zeka ile münazara yapın veya Sokratik sorularla öğrenin</p>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <i class="fas fa-chart-line fa-2x mb-3"></i>
-                            <h5>3. Geri Bildirim Alın</h5>
-                            <p>Performansınızı değerlendirin ve gelişim alanlarınızı keşfedin</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mt-5">
-        <div class="col-12">
-            <div class="alert alert-info" role="alert">
-                <h4 class="alert-heading">
-                    <i class="fas fa-info-circle me-2"></i>
-                    Önemli Bilgi
-                </h4>
-                <p class="mb-0">
-                    Bu platform eğitim amaçlı geliştirilmiştir. Yapay zeka ile etkileşimleriniz
-                    oturum boyunca kaydedilir ancak kalıcı olarak saklanmaz.
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold text-white mb-4">
+                    AI Destekli<br>
+                    <span class="text-warning">Eğitim Deneyimi</span>
+                </h1>
+                <p class="lead text-white-50 mb-5">
+                    Yapay zeka ile kişiselleştirilmiş öğrenme yolculuğunuza başlayın.
+                    Öğrenin, test edin, savunun!
                 </p>
+                <a href="#learning-path" class="btn btn-warning btn-lg me-3 scroll-link">
+                    <i class="fas fa-rocket me-2"></i>
+                    Hemen Başla
+                </a>
+                <a href="#features" class="btn btn-outline-light btn-lg scroll-link">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Nasıl Çalışır?
+                </a>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="hero-animation">
+                    <i class="fas fa-brain fa-10x text-warning opacity-75"></i>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- 3 Aşamalı Öğrenme Yolu -->
+<section id="learning-path" class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-primary">Öğrenme Yolculuğunuz</h2>
+            <p class="lead text-muted">3 aşamada konuyu tam olarak öğrenin ve ustalaşın</p>
+        </div>
+
+        <div class="row">
+            <!-- Aşama 1: AI Agent -->
+            <div class="col-lg-4 mb-4">
+                <div class="learning-step-card h-100">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        <h4 class="step-title">Konuyu Derinlemesine Öğren</h4>
+                        <p class="step-subtitle">AI Öğrenme Asistanı</p>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-icon">
+                            <i class="fas fa-robot fa-4x text-primary"></i>
+                        </div>
+                        <p class="step-description">
+                            AI ile kişiselleştirilmiş yol haritası oluşturun. Video, makale ve
+                            açıklamalarla konuyu adım adım öğrenin.
+                        </p>
+                        <div class="step-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check text-success"></i>
+                                Kişisel öğrenme planı
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check text-success"></i>
+                                Video ve makale kaynakları
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check text-success"></i>
+                                İlerleme takibi
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-footer">
+                        <a href="@Url.Action("Index", "AIAgent")" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-play me-2"></i>
+                            Öğrenmeye Başla
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aşama 2: Sokratik -->
+            <div class="col-lg-4 mb-4">
+                <div class="learning-step-card h-100">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        <h4 class="step-title">Konuyu Öğretmenle Test Et</h4>
+                        <p class="step-subtitle">Sokratik Öğretmen Sözlü</p>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-icon">
+                            <i class="fas fa-user-graduate fa-4x text-success"></i>
+                        </div>
+                        <p class="step-description">
+                            AI öğretmen ile soru-cevap yaparak öğrendiklerinizi pekiştirin.
+                            Sokratik yöntemle bilginizi derinleştirin.
+                        </p>
+                        <div class="step-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check text-success"></i>
+                                Sokratik öğretim yöntemi
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check text-success"></i>
+                                Kişiselleştirilmiş sorular
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check text-success"></i>
+                                Anlık geri bildirim
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-footer">
+                        <a href="@Url.Action("Index", "Sokratik")" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-question-circle me-2"></i>
+                            Sözlü Sınava Başla
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aşama 3: Münazara -->
+            <div class="col-lg-4 mb-4">
+                <div class="learning-step-card h-100">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        <h4 class="step-title">Konunu Savun!</h4>
+                        <p class="step-subtitle">AI Münazara Modu</p>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-icon">
+                            <i class="fas fa-comments fa-4x text-warning"></i>
+                        </div>
+                        <p class="step-description">
+                            AI ile münazara yaparak görüşlerinizi güçlendirin. Argüman geliştirme
+                            becerilerinizi test edin.
+                        </p>
+                        <div class="step-features">
+                            <div class="feature-item">
+                                <i class="fas fa-check text-success"></i>
+                                Gerçekçi münazara deneyimi
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check text-success"></i>
+                                Argüman analizi
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-check text-success"></i>
+                                Detaylı performans raporu
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-footer">
+                        <a href="@Url.Action("Index", "Munazara")" class="btn btn-warning btn-lg w-100">
+                            <i class="fas fa-fire me-2"></i>
+                            Münazaraya Başla
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Önerilen Akış -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card border-0 shadow-lg" style="border-radius: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="card-body text-center text-white p-5">
+                        <h4 class="mb-3">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            Önerilen Öğrenme Akışı
+                        </h4>
+                        <p class="mb-4">
+                            En verimli öğrenme deneyimi için bu sıralamayı takip etmenizi öneririz,
+                            ancak istediğiniz moddan başlayabilirsiniz.
+                        </p>
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <div class="flow-step">
+                                    <i class="fas fa-arrow-right fa-2x mb-2"></i>
+                                    <p class="mb-0">Önce <strong>öğrenin</strong></p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="flow-step">
+                                    <i class="fas fa-arrow-right fa-2x mb-2"></i>
+                                    <p class="mb-0">Sonra <strong>test edin</strong></p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="flow-step">
+                                    <p class="mb-0">En son <strong>savunun</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Özellikler -->
+<section id="features" class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-primary">Platform Özellikleri</h2>
+            <p class="lead text-muted">AI destekli eğitim platformunun sunduğu avantajlar</p>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card text-center p-4">
+                    <i class="fas fa-brain fa-3x text-primary mb-3"></i>
+                    <h5>Yapay Zeka Destekli</h5>
+                    <p class="text-muted">
+                        Gemini AI teknolojisi ile kişiselleştirilmiş öğrenme deneyimi
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card text-center p-4">
+                    <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                    <h5>İlerleme Takibi</h5>
+                    <p class="text-muted">
+                        Öğrenme sürecinizi detaylı analiz ederek motivasyonunuzu artırır
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card text-center p-4">
+                    <i class="fas fa-users fa-3x text-info mb-3"></i>
+                    <h5>Etkileşimli Öğrenme</h5>
+                    <p class="text-muted">
+                        Soru-cevap ve münazara ile aktif öğrenme süreci
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card text-center p-4">
+                    <i class="fas fa-clock fa-3x text-warning mb-3"></i>
+                    <h5>Esnek Zamanlama</h5>
+                    <p class="text-muted">
+                        Kendi hızınızda, istediğiniz zaman öğrenme imkanı
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card text-center p-4">
+                    <i class="fas fa-medal fa-3x text-danger mb-3"></i>
+                    <h5>Detaylı Değerlendirme</h5>
+                    <p class="text-muted">
+                        Performansınızı analiz eden akıllı değerlendirme sistemi
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="feature-card text-center p-4">
+                    <i class="fas fa-globe fa-3x text-purple mb-3"></i>
+                    <h5>Türkçe Destekli</h5>
+                    <p class="text-muted">
+                        Tamamen Türkçe arayüz ve içerik desteği
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-animation {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @@keyframes float {
+        0%, 100%
+
+    {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+
+    }
+
+    .learning-step-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+    }
+
+        .learning-step-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+    .step-header {
+        padding: 2rem 2rem 1rem;
+        text-align: center;
+        position: relative;
+    }
+
+    .step-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 50%;
+        font-weight: bold;
+        font-size: 1.5em;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 2;
+    }
+
+        .step-number::before {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+
+    .step-title {
+        color: #333;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .step-subtitle {
+        color: #666;
+        font-size: 0.9em;
+        margin-bottom: 0;
+    }
+
+    .step-body {
+        padding: 0 2rem 1rem;
+        text-align: center;
+    }
+
+    .step-icon {
+        margin: 1rem 0;
+    }
+
+    .step-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .step-features {
+        text-align: left;
+        margin-bottom: 1rem;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        font-size: 0.9em;
+        color: #555;
+    }
+
+        .feature-item i {
+            margin-right: 0.5rem;
+            width: 16px;
+        }
+
+    .step-footer {
+        padding: 0 2rem 2rem;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border: 1px solid #f0f0f0;
+    }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+    .flow-step {
+        padding: 1rem;
+    }
+
+    .text-purple {
+        color: #6f42c1 !important;
+    }
+
+    .scroll-link {
+        scroll-behavior: smooth;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe learning step cards
+        document.querySelectorAll('.learning-step-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Observe feature cards
+        document.querySelectorAll('.feature-card').forEach(card => {
+            observer.observe(card);
+        });
+    });
+</script>

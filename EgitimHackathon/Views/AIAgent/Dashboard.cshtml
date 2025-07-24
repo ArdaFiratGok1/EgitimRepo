@@ -1,0 +1,278 @@
+﻿@model EgitimMaskotuApp.Models.AIAgentDashboardViewModel
+
+@{
+    ViewData["Title"] = "Öğrenme Yol Haritası";
+}
+
+@* DEĞİŞİKLİK 1: Ana model ve alt nesnelerin null olup olmadığını kontrol ederek sayfanın çökmesini engelliyoruz. *@
+@if (Model == null || Model.Session == null || Model.Session.Nodes == null || Model.CompletedNodes == null || Model.AvailableNodes == null)
+{
+    <div class="alert alert-danger mt-4">Yol haritası verileri yüklenirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.</div>
+}
+else
+{
+    <div class="container-fluid mt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="card-body text-white">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h2 class="mb-2">
+                                    <i class="fas fa-map-marked-alt me-2"></i>
+                                    @Model.Session.MainTopic
+                                </h2>
+                                <p class="mb-0 opacity-90">
+                                    <i class="fas fa-user-graduate me-1"></i>
+                                    Seviye: @Model.Session.UserLevel
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div class="progress mb-2" style="height: 12px;">
+                                    <div class="progress-bar bg-success"
+                                         style="width: @Model.CompletionPercentage%">
+                                        @Model.CompletionPercentage%
+                                    </div>
+                                </div>
+                                <small class="opacity-90">
+                                    @Model.CompletedNodes.Count / @Model.Session.Nodes.Count konu tamamlandı
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.CurrentRecommendation))
+        {
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="alert alert-info border-0 shadow-sm">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="fas fa-robot fa-2x text-info"></i>
+                            </div>
+                            <div>
+                                <h6 class="alert-heading mb-1">AI Önerisi</h6>
+                                <p class="mb-0">@Model.CurrentRecommendation</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-tasks fa-2x text-primary mb-2"></i>
+                        <h4 class="text-primary">@Model.Session.Nodes.Count</h4>
+                        <small class="text-muted">Toplam Konu</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                        <h4 class="text-success">@Model.CompletedNodes.Count</h4>
+                        <small class="text-muted">Tamamlanan</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-play-circle fa-2x text-warning mb-2"></i>
+                        <h4 class="text-warning">@Model.AvailableNodes.Count</h4>
+                        <small class="text-muted">Mevcut</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-clock fa-2x text-info mb-2"></i>
+                        <h4 class="text-info">@((int)Math.Round(Model.Session.Nodes.Sum(n => n.EstimatedMinutes) / 60.0))h</h4>
+                        <small class="text-muted">Tahmini Süre</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white border-bottom">
+                        <h5 class="mb-0">
+                            <i class="fas fa-project-diagram me-2"></i>
+                            Öğrenme Yol Haritası
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="roadmap-container" style="min-height: 500px; position: relative;">
+                            @{
+                                var groupedNodes = Model.Session.Nodes.GroupBy(n => n.Category).ToList();
+                            }
+                            @foreach (var category in groupedNodes)
+                            {
+                                <div class="category-section mb-4" style="position: relative;">
+                                    <h6 class="category-title mb-3 p-2 rounded"
+                                        style="background-color: @(category.FirstOrDefault()?.Position?.Color ?? "#6c757d"); color: white;">
+                                        <i class="fas fa-folder me-2"></i>
+                                        @category.Key
+                                    </h6>
+                                    <div class="row">
+                                        @foreach (var node in category)
+                                        {
+                                            var isCompleted = Model.Session.CompletedNodeIds.Contains(node.Id);
+                                            var isAvailable = Model.AvailableNodes.Any(n => n.Id == node.Id);
+                                            var isClickable = isAvailable || isCompleted;
+
+                                            <div class="col-md-6 col-lg-4 mb-3">
+                                                @* DEĞİŞİKLİK 2: Tıklanabilir kart yapısı tamamen yeniden düzenlendi *@
+                                                @if (isClickable)
+                                                {
+                                                    <a href="@Url.Action("NodeDetail", new { nodeId = node.Id })"
+                                                       class="text-decoration-none node-card-link">
+                                                        <div class="node-card card h-100 @(isCompleted ? "border-success" : "border-primary")"
+                                                             style="cursor: pointer;">
+                                                            <div class="card-body p-3">
+                                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                                    <div class="node-status">
+                                                                        @if (isCompleted)
+                                                                        {
+                                                                            <i class="fas fa-check-circle text-success fa-lg"></i>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <i class="fas fa-play-circle text-primary fa-lg"></i>
+                                                                        }
+                                                                    </div>
+                                                                    <span class="badge bg-light text-dark">@node.EstimatedMinutes dk</span>
+                                                                </div>
+
+                                                                <h6 class="card-title mb-2 text-dark">@node.Title</h6>
+
+                                                                <div class="node-meta">
+                                                                    <small class="text-muted">
+                                                                        <i class="fas fa-signal me-1"></i>
+                                                                        @node.Difficulty
+                                                                    </small>
+                                                                </div>
+
+                                                                @if (node.Keywords != null && node.Keywords.Any())
+                                                                {
+                                                                    <div class="keywords mt-2">
+                                                                        @foreach (var keyword in node.Keywords.Take(2))
+                                                                        {
+                                                                            <span class="badge bg-light text-muted me-1" style="font-size: 0.7em;">
+                                                                                @keyword
+                                                                            </span>
+                                                                        }
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <div class="node-card card h-100 border-secondary"
+                                                         style="cursor: not-allowed; opacity: 0.6;">
+                                                        <div class="card-body p-3">
+                                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                                <div class="node-status">
+                                                                    <i class="fas fa-lock text-secondary fa-lg"></i>
+                                                                </div>
+                                                                <span class="badge bg-light text-dark">@node.EstimatedMinutes dk</span>
+                                                            </div>
+
+                                                            <h6 class="card-title mb-2">@node.Title</h6>
+
+                                                            <div class="node-meta">
+                                                                <small class="text-muted">
+                                                                    <i class="fas fa-signal me-1"></i>
+                                                                    @node.Difficulty
+                                                                </small>
+                                                            </div>
+
+                                                            @if (node.Keywords != null && node.Keywords.Any())
+                                                            {
+                                                                <div class="keywords mt-2">
+                                                                    @foreach (var keyword in node.Keywords.Take(2))
+                                                                    {
+                                                                        <span class="badge bg-light text-muted me-1" style="font-size: 0.7em;">
+                                                                            @keyword
+                                                                        </span>
+                                                                    }
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .node-card {
+        transition: all 0.3s ease;
+        border-radius: 12px;
+    }
+
+    .node-card-link {
+        display: block;
+    }
+
+        .node-card-link:hover .node-card {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+        }
+
+    .category-title {
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .keywords .badge {
+        border-radius: 12px;
+    }
+
+    .roadmap-container {
+        background: linear-gradient(45deg, #f8f9fa 25%, transparent 25%), linear-gradient(-45deg, #f8f9fa 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f8f9fa 75%), linear-gradient(-45deg, transparent 75%, #f8f9fa 75%);
+        background-size: 20px 20px;
+        background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        border-radius: 12px;
+    }
+
+    .progress {
+        border-radius: 10px;
+    }
+
+    .progress-bar {
+        border-radius: 10px;
+    }
+
+    .alert {
+        border-radius: 12px;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+</style>

@@ -312,5 +312,272 @@ Eğer konu yeterince işlendiyse SONRAKİ_SORU kısmına 'BİTTİ' yaz.
                            .Where(s => !string.IsNullOrWhiteSpace(s))
                            .ToList();
         }
+
+        // Services/GeminiApiService.cs - AI Agent metodlarını ekleyin
+
+        // ========== AI AGENT METODLARI ==========
+
+        // Ana yol haritası üretimi
+        public async Task<GeneratedRoadmap> GenerateRoadmapAsync(RoadmapGenerationRequest request)
+        {
+            var prompt = $@"
+Sen bir eğitim uzmanısın ve '{request.Topic}' konusunda {request.UserLevel} seviyesindeki bir öğrenci için kapsamlı bir öğrenme yol haritası hazırlayacaksın.
+
+Öğrenci Bilgileri:
+- Konu: {request.Topic}
+- Seviye: {request.UserLevel}
+- Hedef: {request.LearningGoal}
+- Odak Alanları: {string.Join(", ", request.FocusAreas)}
+
+Lütfen şu formatla yanıt ver:
+BAŞLIK: [ana konu başlığı]
+AÇIKLAMA: [konunun genel açıklaması]
+TOPLAM_SÜRE: [tahmini toplam öğrenme saati]
+ZORLULİK: [Kolay/Orta/Zor]
+
+KATEGORİ_1: [kategori adı]
+KATEGORİ_1_AÇIKLAMA: [kategori açıklaması]
+KONU_1_1: [konu başlığı] | [açıklama] | [zorluk] | [tahmini dakika] | [anahtar kelimeler virgülle]
+KONU_1_2: [konu başlığı] | [açıklama] | [zorluk] | [tahmini dakika] | [anahtar kelimeler virgülle]
+
+KATEGORİ_2: [kategori adı]
+KATEGORİ_2_AÇIKLAMA: [kategori açıklaması]
+KONU_2_1: [konu başlığı] | [açıklama] | [zorluk] | [tahmini dakika] | [anahtar kelimeler virgülle]
+
+Kurallar:
+- Maksimum {request.MaxNodes} konu oluştur
+- Her kategori 2-4 konu içermeli
+- Konuları basit -> karmaşık sıralamasıyla düzenle
+- Türkçe kullan, anlaşılır ol
+- Her konu 15-45 dakika arası olsun
+
+Örnek:
+BAŞLIK: Yapay Zeka Temelleri
+AÇIKLAMA: Yapay zeka alanına giriş yapacak öğrenciler için temel kavramlar
+TOPLAM_SÜRE: 8
+ZORLULİK: Orta
+
+KATEGORİ_1: Temel Kavramlar
+KATEGORİ_1_AÇIKLAMA: AI'ın temel tanımları ve türleri
+KONU_1_1: Yapay Zeka Nedir? | AI'ın tanımı ve günlük hayattaki örnekleri | Kolay | 20 | yapay zeka, tanım, örnekler
+KONU_1_2: AI Türleri | Zayıf AI, Güçlü AI ve türleri | Kolay | 25 | AI türleri, zayıf AI, güçlü AI
+";
+
+            var response = await SendRequestAsync(prompt);
+            return ParseGeneratedRoadmap(response);
+        }
+
+        // Spesifik konu için detaylı açıklama üretimi
+        public async Task<string> GenerateTopicExplanationAsync(string topic, string userLevel, string context = "")
+        {
+            var prompt = $@"
+Sen bir öğretmensin ve '{topic}' konusunu {userLevel} seviyesindeki bir öğrenciye açıklayacaksın.
+
+{(!string.IsNullOrEmpty(context) ? $"Bağlam: {context}" : "")}
+
+Lütfen şu kurallara uyarak açıklama yap:
+1. {userLevel} seviyesine uygun dil kullan
+2. Somut örnekler ver
+3. Karmaşık kavramları basit benzetmelerle açıkla
+4. 2-3 paragraf halinde yaz
+5. Türkçe kullan
+
+Sadece açıklamayı yaz, ek etiket veya format kullanma:
+";
+
+            return await SendRequestAsync(prompt);
+        }
+
+        // Video arama için YouTube query üretimi
+        public async Task<(string query, string expectedTitle)> GenerateVideoSearchAsync(string topic)
+        {
+            var prompt = $@"
+'{topic}' konusu için YouTube'da aranacak en iyi arama sorgusu ve beklenen video başlığını üret.
+
+Lütfen şu formatla yanıt ver:
+ARAMA: [YouTube'da aranacak sorgu]
+BAŞLIK: [beklenen video başlığı]
+
+Kurallar:
+- Türkçe içerik öncelikli olsun
+- Eğitici/öğretici videolar hedeflesin
+- Çok spesifik olmayan, genel arama terimleri kullan
+
+Örnek:
+ARAMA: yapay zeka nedir türkçe anlatım
+BAŞLIK: Yapay Zeka Nedir? - Temel Kavramlar
+
+Sadece formatı kullan:
+";
+
+            var response = await SendRequestAsync(prompt);
+            var query = ExtractValueImproved(response, "ARAMA:");
+            var title = ExtractValueImproved(response, "BAŞLIK:");
+
+            return (query, title);
+        }
+
+        // Makale arama için sorgu üretimi
+        public async Task<(string query, string expectedTitle)> GenerateArticleSearchAsync(string topic)
+        {
+            var prompt = $@"
+'{topic}' konusu için web'de aranacak en iyi makale arama sorgusu ve beklenen makale başlığını üret.
+
+Lütfen şu formatla yanıt ver:
+ARAMA: [web'de aranacak sorgu]
+BAŞLIK: [beklenen makale başlığı]
+
+Kurallar:
+- Türkçe içerik öncelikli
+- Akademik veya güvenilir kaynaklardan
+- Detaylı açıklama içeren makaleler
+
+Örnek:
+ARAMA: yapay zeka algoritmaları makale türkçe
+BAŞLIK: Yapay Zeka Algoritmaları ve Uygulamaları
+
+Sadece formatı kullan:
+";
+
+            var response = await SendRequestAsync(prompt);
+            var query = ExtractValueImproved(response, "ARAMA:");
+            var title = ExtractValueImproved(response, "BAŞLIK:");
+
+            return (query, title);
+        }
+
+        // Öğrenme önerisi üretimi
+        public async Task<string> GenerateLearningRecommendationAsync(AIAgentSession session)
+        {
+            var completedTopics = string.Join(", ", session.Nodes
+                .Where(n => session.CompletedNodeIds.Contains(n.Id))
+                .Select(n => n.Title));
+
+            var availableTopics = string.Join(", ", session.Nodes
+                .Where(n => !session.CompletedNodeIds.Contains(n.Id))
+                .Select(n => n.Title));
+
+            var prompt = $@"
+Bir öğrenci '{session.MainTopic}' konusunu öğreniyor.
+
+Tamamladığı konular: {completedTopics}
+Henüz çalışmadığı konular: {availableTopics}
+
+Bu öğrenciye sıradaki öğrenmesi gereken konuyu önererek motivasyonel bir mesaj yaz.
+
+Kurallar:
+- Samimi ve motive edici ol
+- Spesifik bir sonraki adım öner
+- Maksimum 2 cümle
+- Türkçe kullan
+
+Sadece önerinizi yazın:
+";
+
+            return await SendRequestAsync(prompt);
+        }
+
+        // Progress analizi
+        public async Task<string> GenerateProgressAnalysisAsync(AIAgentSession session, List<UserProgress> userProgresses)
+        {
+            var totalNodes = session.Nodes.Count;
+            var completedNodes = session.CompletedNodeIds.Count;
+            var totalTimeSpent = userProgresses.Sum(p => p.TimeSpentMinutes);
+
+            var completedTopics = session.Nodes
+                .Where(n => session.CompletedNodeIds.Contains(n.Id))
+                .Select(n => n.Title);
+
+            var prompt = $@"
+Bir öğrencinin '{session.MainTopic}' konusundaki öğrenme ilerlemesini analiz et:
+
+İstatistikler:
+- Toplam konu: {totalNodes}
+- Tamamlanan: {completedNodes}
+- Geçirilen süre: {totalTimeSpent} dakika
+- Tamamlanan konular: {string.Join(", ", completedTopics)}
+
+Bu veriler ışığında öğrenciye:
+1. Başarılarını tebrik eden
+2. Eksik alanları belirten  
+3. Motivasyonel bir değerlendirme mesajı yaz
+
+Maksimum 3 cümle, Türkçe:
+";
+
+            return await SendRequestAsync(prompt);
+        }
+
+        // Parsing metodları
+        private GeneratedRoadmap ParseGeneratedRoadmap(string response)
+        {
+            var roadmap = new GeneratedRoadmap();
+            var lines = response.Split('\n').Select(l => l.Trim()).Where(l => !string.IsNullOrEmpty(l)).ToArray();
+
+            roadmap.MainTopic = ExtractValueImproved(response, "BAŞLIK:");
+            roadmap.Description = ExtractValueImproved(response, "AÇIKLAMA:");
+            roadmap.Difficulty = ExtractValueImproved(response, "ZORLULİK:");
+
+            if (int.TryParse(ExtractValueImproved(response, "TOPLAM_SÜRE:"), out int hours))
+                roadmap.EstimatedTotalHours = hours;
+
+            var categories = new List<RoadmapCategory>();
+            RoadmapCategory currentCategory = null;
+            int categoryOrder = 1;
+            int topicOrder = 1;
+
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("KATEGORİ_") && line.Contains(":") && !line.Contains("_AÇIKLAMA"))
+                {
+                    // Yeni kategori
+                    if (currentCategory != null)
+                        categories.Add(currentCategory);
+
+                    currentCategory = new RoadmapCategory
+                    {
+                        Name = line.Substring(line.IndexOf(':') + 1).Trim(),
+                        Order = categoryOrder++
+                    };
+                    topicOrder = 1;
+                }
+                else if (line.StartsWith("KATEGORİ_") && line.Contains("_AÇIKLAMA:"))
+                {
+                    // Kategori açıklaması
+                    if (currentCategory != null)
+                        currentCategory.Description = line.Substring(line.IndexOf(':') + 1).Trim();
+                }
+                else if (line.StartsWith("KONU_") && line.Contains("|"))
+                {
+                    // Konu parsing
+                    if (currentCategory != null)
+                    {
+                        var parts = line.Substring(line.IndexOf(':') + 1).Split('|');
+                        if (parts.Length >= 5)
+                        {
+                            var topic = new RoadmapTopic
+                            {
+                                Title = parts[0].Trim(),
+                                Description = parts[1].Trim(),
+                                Difficulty = parts[2].Trim(),
+                                Order = topicOrder++
+                            };
+
+                            if (int.TryParse(parts[3].Trim(), out int minutes))
+                                topic.EstimatedMinutes = minutes;
+
+                            topic.Keywords = parts[4].Split(',').Select(k => k.Trim()).ToList();
+                            currentCategory.Topics.Add(topic);
+                        }
+                    }
+                }
+            }
+
+            if (currentCategory != null)
+                categories.Add(currentCategory);
+
+            roadmap.Categories = categories;
+            return roadmap;
+        }
     }
 }

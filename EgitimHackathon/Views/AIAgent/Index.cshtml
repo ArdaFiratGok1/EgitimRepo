@@ -1,0 +1,338 @@
+﻿@model EgitimMaskotuApp.Models.AIAgentStartViewModel
+
+@{
+    ViewData["Title"] = "AI Agent - Öğrenme Yol Haritası Oluştur";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Ana Başlık -->
+            <div class="text-center mb-5">
+                <div class="mb-4">
+                    <i class="fas fa-robot fa-4x text-primary mb-3"></i>
+                    <h1 class="display-5 fw-bold text-primary">AI Öğrenme Asistanı</h1>
+                    <p class="lead text-muted">
+                        Yapay zeka ile kişiselleştirilmiş öğrenme yol haritanızı oluşturun
+                    </p>
+                </div>
+            </div>
+
+            <!-- Özellikler -->
+            <div class="row mb-5">
+                <div class="col-md-4 text-center">
+                    <div class="feature-card p-4">
+                        <i class="fas fa-map-marked-alt fa-3x text-success mb-3"></i>
+                        <h5>Kişisel Yol Haritası</h5>
+                        <p class="text-muted">
+                            AI size özel, adım adım öğrenme planı hazırlar
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="feature-card p-4">
+                        <i class="fas fa-video fa-3x text-danger mb-3"></i>
+                        <h5>Zengin İçerik</h5>
+                        <p class="text-muted">
+                            Her konuya özel video ve makale kaynakları
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="feature-card p-4">
+                        <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+                        <h5>İlerleme Takibi</h5>
+                        <p class="text-muted">
+                            Öğrenme sürecinizi takip edin ve motive olun
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0;">
+                    <h3 class="mb-0">
+                        <i class="fas fa-magic me-2"></i>
+                        Yol Haritanızı Oluşturun
+                    </h3>
+                </div>
+                <div class="card-body p-5">
+                    <form method="post" action="@Url.Action("CreateRoadmap")">
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger border-0 shadow-sm mb-4">
+                                <h6 class="alert-heading">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Lütfen aşağıdaki hataları düzeltin:
+                                </h6>
+                                <ul class="mb-0">
+                                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                    {
+                                        <li>@error.ErrorMessage</li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+                        <!-- Konu -->
+                        <div class="mb-4">
+                            <label for="Topic" class="form-label fw-bold">
+                                <i class="fas fa-lightbulb me-2 text-warning"></i>
+                                Öğrenmek İstediğiniz Konu *
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg @(ViewData.ModelState["Topic"]?.Errors.Any() == true ? "is-invalid" : "")" 
+                                   id="Topic" 
+                                   name="Topic" 
+                                   value="@Model.Topic"
+                                   placeholder="Örn: Yapay Zeka, Makine Öğrenmesi, Python Programlama..."
+                                   style="border-radius: 12px;">
+                            @if (ViewData.ModelState["Topic"]?.Errors.Any() == true)
+                            {
+                                <div class="invalid-feedback">
+                                    @ViewData.ModelState["Topic"].Errors.First().ErrorMessage
+                                </div>
+                            }
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Ne öğrenmek istediğinizi detaylı bir şekilde yazın
+                            </div>
+                        </div>
+
+                        <!-- Seviye -->
+                        <div class="mb-4">
+                            <label for="UserLevel" class="form-label fw-bold">
+                                <i class="fas fa-signal me-2 text-info"></i>
+                                Mevcut Seviyeniz
+                            </label>
+
+                            <select class="form-select form-select-lg" asp-for="UserLevel" style="border-radius: 12px;">
+
+                                <option value="Başlangıç">
+                                    🌱 Başlangıç - Konuya yeni başlıyorum
+                                </option>
+
+                                <option value="Orta">
+                                    🌿 Orta - Temel bilgilerim var
+                                </option>
+
+                                <option value="İleri">
+                                    🌳 İleri - Konuyu iyi biliyorum, derinleşmek istiyorum
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Öğrenme Hedefi -->
+                        <div class="mb-4">
+                            <label for="LearningGoal" class="form-label fw-bold">
+                                <i class="fas fa-target me-2 text-success"></i>
+                                Öğrenme Hedefiniz
+                            </label>
+
+                            <select class="form-select form-select-lg" asp-for="LearningGoal" style="border-radius: 12px;">
+
+                                <option value="Genel">
+                                    📚 Genel Kültür - Konuyu genel olarak öğrenmek
+                                </option>
+
+                                <option value="Sınav">
+                                    📝 Sınav Hazırlığı - Sınava hazırlanıyorum
+                                </option>
+
+                                <option value="Proje">
+                                    🛠️ Proje Geliştirme - Pratik uygulama yapmak
+                                </option>
+
+                                <option value="Kariyer">
+                                    💼 Kariyer Gelişimi - Mesleğimde kullanacağım
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Odak Alanları (Opsiyonel) -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-crosshairs me-2 text-warning"></i>
+                                Odaklanmak İstediğiniz Alanlar (Opsiyonel)
+                            </label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="FocusAreas" value="Teori" id="focus1">
+                                        <label class="form-check-label" for="focus1">
+                                            📖 Teorik Bilgiler
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="FocusAreas" value="Pratik" id="focus2">
+                                        <label class="form-check-label" for="focus2">
+                                            ⚡ Pratik Uygulamalar
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="FocusAreas" value="Proje" id="focus3">
+                                        <label class="form-check-label" for="focus3">
+                                            🚀 Proje Örnekleri
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="FocusAreas" value="Matematik" id="focus4">
+                                        <label class="form-check-label" for="focus4">
+                                            🧮 Matematiksel Altyapı
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="FocusAreas" value="Araçlar" id="focus5">
+                                        <label class="form-check-label" for="focus5">
+                                            🛠️ Araçlar ve Teknolojiler
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="FocusAreas" value="Trend" id="focus6">
+                                        <label class="form-check-label" for="focus6">
+                                            📈 Güncel Trendler
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg py-3" style="border-radius: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                                <i class="fas fa-magic me-2"></i>
+                                AI ile Yol Haritamı Oluştur
+                            </button>
+                            <small class="text-center text-muted mt-2">
+                                <i class="fas fa-clock me-1"></i>
+                                Yol haritanız yaklaşık 10-15 saniyede hazır olacak
+                            </small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Adım Açıklaması -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card bg-light border-0" style="border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <h5 class="text-center mb-4">
+                                <i class="fas fa-route me-2"></i>
+                                Öğrenme Yolculuğunuz Nasıl Olacak?
+                            </h5>
+                            <div class="row text-center">
+                                <div class="col-md-4">
+                                    <div class="step-item mb-3">
+                                        <div class="step-number">1</div>
+                                        <h6>Öğren</h6>
+                                        <p class="small text-muted">
+                                            AI destekli açıklamalar, videolar ve makalelerle konuyu derinlemesine öğrenin
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="step-item mb-3">
+                                        <div class="step-number">2</div>
+                                        <h6>Test Et</h6>
+                                        <p class="small text-muted">
+                                            Sokratik öğretmen ile öğrendiklerinizi soru-cevap şeklinde pekiştirin
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="step-item mb-3">
+                                        <div class="step-number">3</div>
+                                        <h6>Savun</h6>
+                                        <p class="small text-muted">
+                                            Münazara modunda AI ile tartışarak konudaki görüşlerinizi güçlendirin
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.feature-card {
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.form-control, .form-select {
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.step-item {
+    position: relative;
+}
+
+.step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-bottom: 15px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.card {
+    border-radius: 20px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form validation
+    const form = document.querySelector('form');
+    const topicInput = document.getElementById('Topic');
+    
+    form.addEventListener('submit', function(e) {
+        if (topicInput.value.trim().length < 3) {
+            e.preventDefault();
+            alert('Lütfen en az 3 karakter uzunluğunda bir konu girin.');
+            topicInput.focus();
+        }
+    });
+
+    // Smooth scroll for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+    });
+});
+</script>
