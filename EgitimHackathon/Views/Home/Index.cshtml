@@ -1,0 +1,108 @@
+﻿@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<div class="mascot-header text-center mb-5">
+    <div class="container">
+        <h1 class="display-4 mb-3">
+            <i class="fas fa-robot me-3"></i>
+            Eğitim Maskotuna Hoş Geldiniz!
+        </h1>
+        <p class="lead">Yapay zeka destekli öğrenme deneyiminiz burada başlıyor</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-md-6 mb-4">
+            <div class="card mode-card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-4">
+                        <i class="fas fa-comments fa-4x text-primary"></i>
+                    </div>
+                    <h3 class="card-title mb-3">Öğretici Münazara</h3>
+                    <p class="card-text mb-4">
+                        Seçtiğiniz konularda yapay zeka ile münazara yapın. Argümantasyon becerilerinizi geliştirin
+                        ve farklı bakış açılarını keşfedin. Her münazara sonunda detaylı geri bildirim alın.
+                    </p>
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>Ortalama 10-15 dakika
+                        </small>
+                    </div>
+                    <a href="@Url.Action("Index", "Munazara")" class="btn btn-primary-custom">
+                        <i class="fas fa-play me-2"></i>Münazara Başlat
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card mode-card">
+                <div class="card-body text-center p-4">
+                    <div class="mb-4">
+                        <i class="fas fa-question-circle fa-4x text-success"></i>
+                    </div>
+                    <h3 class="card-title mb-3">Sokratik Öğretim</h3>
+                    <p class="card-text mb-4">
+                        Konularınızı Sokratik yöntemle öğrenin. Yapay zeka öğretmeniniz size sorular sorarak
+                        bilginizi pekiştirir ve eksik noktalarınızı keşfetmenize yardımcı olur.
+                    </p>
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>Ortalama 15-20 dakika
+                        </small>
+                    </div>
+                    <a href="@Url.Action("Index", "Sokratik")" class="btn btn-success">
+                        <i class="fas fa-graduation-cap me-2"></i>Öğrenmeye Başla
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
+                <div class="card-body text-center p-5">
+                    <h2 class="mb-4">
+                        <i class="fas fa-lightbulb me-3"></i>
+                        Nasıl Çalışır?
+                    </h2>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <i class="fas fa-edit fa-2x mb-3"></i>
+                            <h5>1. Konu Seçin</h5>
+                            <p>İlgilendiğiniz konuyu yazın ve modunuzu belirleyin</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <i class="fas fa-robot fa-2x mb-3"></i>
+                            <h5>2. AI ile Etkileşim</h5>
+                            <p>Yapay zeka ile münazara yapın veya Sokratik sorularla öğrenin</p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <i class="fas fa-chart-line fa-2x mb-3"></i>
+                            <h5>3. Geri Bildirim Alın</h5>
+                            <p>Performansınızı değerlendirin ve gelişim alanlarınızı keşfedin</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="alert alert-info" role="alert">
+                <h4 class="alert-heading">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Önemli Bilgi
+                </h4>
+                <p class="mb-0">
+                    Bu platform eğitim amaçlı geliştirilmiştir. Yapay zeka ile etkileşimleriniz
+                    oturum boyunca kaydedilir ancak kalıcı olarak saklanmaz.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

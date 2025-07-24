@@ -1,0 +1,190 @@
+﻿@model EgitimMaskotuApp.Models.SokratikSession
+@{
+    ViewData["Title"] = "Öğrenme Özeti";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                <div class="card-header text-center" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border-radius: 20px 20px 0 0;">
+                    <h2 class="mb-0">
+                        <i class="fas fa-chart-bar me-3"></i>
+                        Öğrenme Süreci Tamamlandı!
+                    </h2>
+                </div>
+                <div class="card-body p-5">
+                    <div class="text-center mb-5">
+                        <i class="fas fa-graduation-cap fa-4x text-success mb-3"></i>
+                        <h3 class="text-success">@Model.Konu</h3>
+                        <p class="lead text-muted">Sokratik yöntem ile öğrenme süreciniz başarıyla tamamlandı!</p>
+                    </div>
+
+                    <!-- İstatistikler -->
+                    <div class="row mb-5">
+                        <div class="col-md-4">
+                            <div class="card text-center h-100" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border: none;">
+                                <div class="card-body">
+                                    <i class="fas fa-question-circle fa-2x text-primary mb-3"></i>
+                                    <h3 class="text-primary">@Model.QAHistory.Count</h3>
+                                    <p class="mb-0">Soru Yanıtlandı</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-center h-100" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border: none;">
+                                <div class="card-body">
+                                    <i class="fas fa-clock fa-2x text-warning mb-3"></i>
+                                    <h3 class="text-warning">@((DateTime.Now - Model.CreatedAt).Minutes)</h3>
+                                    <p class="mb-0">Dakika Sürdü</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-center h-100" style="background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%); border: none;">
+                                <div class="card-body">
+                                    <i class="fas fa-brain fa-2x text-info mb-3"></i>
+                                    <h3 class="text-info">100%</h3>
+                                    <p class="mb-0">Tamamlanma</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Soru-Cevap Geçmişi -->
+                    <div class="card border-info mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-history me-2"></i>
+                                Öğrenme Süreci Geçmişi
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chat-container" style="max-height: 400px;">
+                                @if (Model.QAHistory.Any())
+                                {
+                                    @for (int i = 0; i < Model.QAHistory.Count; i++)
+                                    {
+                                        var qa = Model.QAHistory[i];
+
+                                        <!-- Soru -->
+                                        <div class="mb-3">
+                                            <div class="d-flex align-items-start">
+                                                <div class="me-3">
+                                                    <span class="badge bg-info rounded-circle" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                                                        @(i + 1)
+                                                    </span>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="alert alert-light border-start border-info border-4">
+                                                        <div class="d-flex align-items-start">
+                                                            <i class="fas fa-chalkboard-teacher text-info me-2 mt-1"></i>
+                                                            <div>
+                                                                <strong class="text-info">Öğretmen:</strong>
+                                                                <div class="mt-1">@qa.Question</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="alert alert-primary border-start border-primary border-4 mb-2">
+                                                        <div class="d-flex align-items-start">
+                                                            <i class="fas fa-user-graduate text-primary me-2 mt-1"></i>
+                                                            <div>
+                                                                <strong class="text-primary">Sizin Cevabınız:</strong>
+                                                                <div class="mt-1">@qa.Answer</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    @if (!string.IsNullOrEmpty(qa.TeacherFeedback))
+                                                    {
+                                                        <div class="alert alert-success border-start border-success border-4">
+                                                            <div class="d-flex align-items-start">
+                                                                <i class="fas fa-comment text-success me-2 mt-1"></i>
+                                                                <div>
+                                                                    <strong class="text-success">Geri Bildirim:</strong>
+                                                                    <div class="mt-1">@qa.TeacherFeedback</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="text-center text-muted p-4">
+                                        <i class="fas fa-info-circle fa-2x mb-3"></i>
+                                        <p>Öğrenme geçmişi bulunamadı.</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Başarı Mesajı -->
+                    <div class="alert alert-success border-0" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                        <div class="text-center">
+                            <h4 class="alert-heading">
+                                <i class="fas fa-trophy me-2"></i>
+                                Tebrikler!
+                            </h4>
+                            <p class="mb-0">
+                                <strong>@Model.Konu</strong> konusunu Sokratik yöntemle başarıyla öğrendiniz.
+                                Bu süreçte @Model.QAHistory.Count soru yanıtladınız ve konuyu derinlemesine kavradınız.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Öğrenme İpuçları -->
+                    <div class="card border-warning mb-4">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                Öğrenmeyi Pekiştirmek İçin
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-repeat text-primary me-2"></i>Tekrar:</h6>
+                                    <ul>
+                                        <li>Birkaç gün sonra konuyu tekrar gözden geçirin</li>
+                                        <li>Öğrendiklerinizi başkalarına anlatmaya çalışın</li>
+                                        <li>Benzer konularda yeni sorular oluşturun</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6><i class="fas fa-book text-success me-2"></i>Araştırma:</h6>
+                                    <ul>
+                                        <li>Konuyla ilgili ek kaynaklar araştırın</li>
+                                        <li>Farklı bakış açılarını keşfedin</li>
+                                        <li>Pratik uygulamalar yapın</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aksiyon Butonları -->
+                    <div class="text-center">
+                        <a href="@Url.Action("NewSession")" class="btn btn-success btn-lg me-3">
+                            <i class="fas fa-plus me-2"></i>
+                            Yeni Konu Öğren
+                        </a>
+                        <a href="@Url.Action("Index", "Munazara")" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-comments me-2"></i>
+                            Münazara Dene
+                        </a>
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-home me-2"></i>
+                            Ana Sayfa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

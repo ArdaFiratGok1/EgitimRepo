@@ -1,0 +1,189 @@
+﻿@model EgitimMaskotuApp.Models.MunazaraResult
+@{
+    ViewData["Title"] = "Münazara Sonuçları";
+    var session = ViewBag.Session as EgitimMaskotuApp.Models.MunazaraSession;
+}
+
+<div class="container">
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.Error
+        </div>
+    }
+
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                <div class="card-header text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0;">
+                    <h2 class="mb-0">
+                        <i class="fas fa-trophy me-3"></i>
+                        Münazara Sonuçları
+                    </h2>
+                </div>
+                <div class="card-body p-5">
+                    @if (session != null)
+                    {
+                        <div class="text-center mb-4">
+                            <h4 class="text-muted">@session.Konu</h4>
+                        </div>
+                    }
+
+                    <!-- Puan ve Kazanan -->
+                    <div class="row mb-5">
+                        <div class="col-md-6">
+                            <div class="card text-center h-100" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border: none;">
+                                <div class="card-body">
+                                    <i class="fas fa-medal fa-3x text-warning mb-3"></i>
+                                    <h3>Kazanan</h3>
+                                    <h2 class="text-primary fw-bold">
+                                        @(Model.Winner == "Kullanıcı" ? "🎉 SİZ!" : "🤖 AI MASKOT")
+                                    </h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card text-center h-100" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border: none;">
+                                <div class="card-body">
+                                    <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                                    <h3>Puanınız</h3>
+                                    <h1 class="display-4 fw-bold text-success">
+                                        @Model.UserScore<small class="fs-3">/100</small>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detaylı Geri Bildirim -->
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 border-success">
+                                <div class="card-header bg-success text-white">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-thumbs-up me-2"></i>
+                                        Güçlü Yanlarınız
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    @if (Model.GoodPoints.Any())
+                                    {
+                                        <ul class="list-unstyled">
+                                            @foreach (var point in Model.GoodPoints)
+                                            {
+                                                <li class="mb-2">
+                                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                                    @point
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-muted">Değerlendirme yapılırken bir sorun oluştu.</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 border-warning">
+                                <div class="card-header bg-warning text-dark">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        Gelişim Alanları
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    @if (Model.BadPoints.Any())
+                                    {
+                                        <ul class="list-unstyled">
+                                            @foreach (var point in Model.BadPoints)
+                                            {
+                                                <li class="mb-2">
+                                                    <i class="fas fa-arrow-right text-warning me-2"></i>
+                                                    @point
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-muted">Gelişim önerileri yüklenemedi.</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detaylı Analiz -->
+                    @if (!string.IsNullOrEmpty(Model.DetailedAnalysis))
+                    {
+                        <div class="card border-info mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-microscope me-2"></i>
+                                    Detaylı Analiz
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-0">@Model.DetailedAnalysis</p>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Münazara Geçmişi -->
+                    @if (session != null && session.Messages.Any())
+                    {
+                        <div class="card border-secondary">
+                            <div class="card-header bg-secondary text-white">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-history me-2"></i>
+                                    Münazara Geçmişi
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chat-container" style="max-height: 300px;">
+                                    @foreach (var message in session.Messages)
+                                    {
+                                        <div class="message @(message.Speaker == "user" ? "user-message" : "ai-message") mb-3">
+                                            <div class="d-flex align-items-start">
+                                                <div class="me-2">
+                                                    @if (message.Speaker == "user")
+                                                    {
+                                                        <i class="fas fa-user"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="fas fa-robot"></i>
+                                                    }
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-bold mb-1">
+                                                        @(message.Speaker == "user" ? "Siz" : "AI Maskot")
+                                                    </div>
+                                                    <div>@message.Content</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Aksiyon Butonları -->
+                    <div class="text-center mt-5">
+                        <a href="@Url.Action("NewMunazara")" class="btn btn-primary-custom btn-lg me-3">
+                            <i class="fas fa-redo me-2"></i>
+                            Yeni Münazara
+                        </a>
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-home me-2"></i>
+                            Ana Sayfa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

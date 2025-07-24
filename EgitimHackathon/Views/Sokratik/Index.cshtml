@@ -1,0 +1,158 @@
+﻿@model EgitimMaskotuApp.Models.SokratikStartViewModel
+@{
+    ViewData["Title"] = "Sokratik Öğretim";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                <div class="card-header text-center" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border-radius: 20px 20px 0 0;">
+                    <h2 class="mb-0">
+                        <i class="fas fa-question-circle me-3"></i>
+                        Sokratik Öğretim
+                    </h2>
+                </div>
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-graduation-cap fa-3x text-success mb-3"></i>
+                        <p class="lead">
+                            Öğrenmek istediğiniz konuyu belirtin. AI öğretmeniniz size sorular sorarak
+                            konuyu derinlemesine anlamanızı sağlayacak.
+                        </p>
+                    </div>
+
+                    <form asp-action="Start" method="post">
+                        <div class="form-group mb-4">
+                            <label asp-for="Konu" class="form-label fw-bold">
+                                <i class="fas fa-book me-2"></i>Öğrenmek İstediğiniz Konu
+                            </label>
+                            <textarea asp-for="Konu" class="form-control" rows="4"
+                                      placeholder="Örnek: 'Solunum sistemi', 'Osmanlı İmparatorluğu', 'Kuantum fiziği', 'Fransız Devrimi', 'Programlama mantığı' gibi öğrenmek istediğiniz konuyu yazın..."
+                                      style="border-radius: 10px;"></textarea>
+                            <span asp-validation-for="Konu" class="text-danger"></span>
+                        </div>
+
+                        <div class="alert alert-info" role="alert">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Sokratik Yöntem Nedir?
+                            </h6>
+                            <ul class="mb-0">
+                                <li>AI öğretmeniniz size konuyla ilgili sorular soracak</li>
+                                <li>Verdiğiniz cevaplara göre yeni sorular yöneltecek</li>
+                                <li>Bu şekilde konuyu derinlemesine öğreneceksiniz</li>
+                                <li>Eksik bilgileriniz tespit edilip tamamlanacak</li>
+                            </ul>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-play me-2"></i>
+                                Öğrenmeye Başla
+                            </button>
+                        </div>
+                    </form>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger mt-3">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <div>@error.ErrorMessage</div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0" style="background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);">
+                <div class="card-body p-4">
+                    <h4 class="text-center mb-4">
+                        <i class="fas fa-lightbulb me-2"></i>
+                        Etkili Öğrenme İpuçları
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-check-circle text-success me-2"></i>Başarılı Öğrenme İçin:</h6>
+                            <ul>
+                                <li>Dürüst ve samimi cevaplar verin</li>
+                                <li>"Bilmiyorum" demekten çekinmeyin</li>
+                                <li>Sorulara açık ve detaylı yanıt verin</li>
+                                <li>Anlamadığınız noktalarda soru sorun</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-star text-warning me-2"></i>Öğrenme Süreci:</h6>
+                            <ul>
+                                <li>Yaklaşık 8-10 soru sorulacak</li>
+                                <li>Her cevabınıza geri bildirim alacaksınız</li>
+                                <li>Konuyu adım adım öğreneceksiniz</li>
+                                <li>Sonunda genel bir özet alacaksınız</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>
+                        Popüler Konular
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <h6>Fen Bilimleri</h6>
+                            <ul class="list-unstyled">
+                                <li>• Fotosentez</li>
+                                <li>• Atom yapısı</li>
+                                <li>• DNA yapısı</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3">
+                            <h6>Matematik</h6>
+                            <ul class="list-unstyled">
+                                <li>• Türev kavramı</li>
+                                <li>• Olasılık</li>
+                                <li>• Geometri</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3">
+                            <h6>Tarih</h6>
+                            <ul class="list-unstyled">
+                                <li>• Sanayi Devrimi</li>
+                                <li>• Rönesans</li>
+                                <li>• Türk İstiklal Harbi</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3">
+                            <h6>Teknoloji</h6>
+                            <ul class="list-unstyled">
+                                <li>• Yapay Zeka</li>
+                                <li>• Blockchain</li>
+                                <li>• Programlama</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
