@@ -1,0 +1,150 @@
+﻿@model EgitimMaskotuApp.Models.MunazaraChatViewModel
+@{
+    ViewData["Title"] = "Münazara - " + Model.Session.Konu;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0;">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="mb-0">
+                                <i class="fas fa-comments me-2"></i>
+                                @Model.Session.Konu
+                            </h4>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <span class="badge bg-light text-dark fs-6">
+                                Round: @(Model.Session.TurnCount / 2 + 1) / @(Model.Session.MaxTurns / 2)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <!-- Taraf Bilgileri -->
+                    <div class="row g-0">
+                        <div class="col-6 bg-primary text-white text-center p-2">
+                            <small><i class="fas fa-user me-1"></i> SİZ: @Model.Session.KullaniciTarafi</small>
+                        </div>
+                        <div class="col-6 bg-danger text-white text-center p-2">
+                            <small><i class="fas fa-robot me-1"></i> AI: @Model.Session.AiTarafi</small>
+                        </div>
+                    </div>
+
+                    <!-- Chat Alanı -->
+                    <div class="chat-container" id="chatContainer">
+                        @if (Model.Session.Messages.Count == 0)
+                        {
+                            <div class="text-center text-muted p-5">
+                                <i class="fas fa-comments fa-3x mb-3"></i>
+                                <p>Münazara başlamak için ilk mesajınızı yazın!</p>
+                                <p><small>Güçlü argümanlarınızla tarafınızı savunun.</small></p>
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var message in Model.Session.Messages)
+                            {
+                                <div class="message @(message.Speaker == "user" ? "user-message" : "ai-message")">
+                                    <div class="d-flex align-items-start">
+                                        <div class="me-2">
+                                            @if (message.Speaker == "user")
+                                            {
+                                                <i class="fas fa-user"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fas fa-robot"></i>
+                                            }
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="fw-bold mb-1">
+                                                @(message.Speaker == "user" ? "Siz" : "AI Maskot")
+                                            </div>
+                                            <div>@message.Content</div>
+                                            <small class="opacity-75">
+                                                @message.Timestamp.ToString("HH:mm")
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+
+                    <!-- Mesaj Gönderme Alanı -->
+                    @if (Model.Session.IsActive && Model.Session.TurnCount < Model.Session.MaxTurns)
+                    {
+                        <div class="p-4 border-top">
+                            <form asp-action="SendMessage" method="post">
+                                <div class="input-group">
+                                    <textarea name="message" class="form-control" rows="3"
+                                              placeholder="Argümanınızı yazın..."
+                                              required style="border-radius: 10px 0 0 10px;"></textarea>
+                                    <button type="submit" class="btn btn-primary-custom" style="border-radius: 0 10px 10px 0;">
+                                        <i class="fas fa-paper-plane"></i>
+                                        <span class="d-none d-md-inline ms-2">Gönder</span>
+                                    </button>
+                                </div>
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Kalan mesaj hakkınız: @((Model.Session.MaxTurns - Model.Session.TurnCount + 1) / 2)
+                                </small>
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-4 border-top text-center">
+                            <div class="alert alert-success">
+                                <h5><i class="fas fa-flag-checkered me-2"></i>Münazara Tamamlandı!</h5>
+                                <p class="mb-0">Sonuçlarınızı görmek için aşağıdaki butona tıklayın.</p>
+                            </div>
+                            <a href="@Url.Action("Result")" class="btn btn-success btn-lg">
+                                <i class="fas fa-chart-line me-2"></i>
+                                Sonuçları Gör
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="alert alert-danger">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <div>@error.ErrorMessage</div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Chat alanını otomatik scroll et
+        function scrollToBottom() {
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Sayfa yüklendiğinde scroll et
+        document.addEventListener('DOMContentLoaded', scrollToBottom);
+
+        // Form submit edildiğinde loading göster
+        document.querySelector('form').addEventListener('submit', function() {
+            const button = this.querySelector('button[type="submit"]');
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span class="d-none d-md-inline ms-2">Gönderiliyor...</span>';
+            button.disabled = true;
+        });
+    </script>
+}

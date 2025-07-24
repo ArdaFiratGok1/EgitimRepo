@@ -1,0 +1,109 @@
+﻿@model EgitimMaskotuApp.Models.MunazaraStartViewModel
+@{
+    ViewData["Title"] = "Öğretici Münazara";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                <div class="card-header text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0;">
+                    <h2 class="mb-0">
+                        <i class="fas fa-comments me-3"></i>
+                        Öğretici Münazara
+                    </h2>
+                </div>
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-robot fa-3x text-primary mb-3"></i>
+                        <p class="lead">
+                            Münazara yapmak istediğiniz konuyu belirtin. Yapay zeka sizinle karşıt görüşte
+                            münazara yapacak ve sonunda performansınızı değerlendirecek.
+                        </p>
+                    </div>
+
+                    <form asp-action="Start" method="post">
+                        <div class="form-group mb-4">
+                            <label asp-for="Konu" class="form-label fw-bold">
+                                <i class="fas fa-lightbulb me-2"></i>Münazara Konusu
+                            </label>
+                            <textarea asp-for="Konu" class="form-control" rows="4"
+                                      placeholder="Örnek: 'Sosyal medyanın gençler üzerindeki etkisi', 'Yapay zekanın iş hayatına etkileri', 'Çevrimiçi eğitim vs Yüz yüze eğitim' gibi tartışılabilir bir konu yazın..."
+                                      style="border-radius: 10px;"></textarea>
+                            <span asp-validation-for="Konu" class="text-danger"></span>
+                        </div>
+
+                        <div class="alert alert-info" role="alert">
+                            <h6 class="alert-heading">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Nasıl Çalışır?
+                            </h6>
+                            <ul class="mb-0">
+                                <li>Konunuzu yazdıktan sonra sistem, münazara konusunu ve tarafları belirleyecek</li>
+                                <li>Size hangi tarafı savunacağınız söylenecek, AI karşıt tarafı savunacak</li>
+                                <li>3'er mesajlık karşılıklı münazara yapacaksınız</li>
+                                <li>Sonunda objektif bir değerlendirme alacaksınız</li>
+                            </ul>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary-custom btn-lg">
+                                <i class="fas fa-play me-2"></i>
+                                Münazara Konusunu Analiz Et
+                            </button>
+                        </div>
+                    </form>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger mt-3">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <div>@error.ErrorMessage</div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+                <div class="card-body p-4">
+                    <h4 class="text-center mb-4">
+                        <i class="fas fa-tips me-2"></i>
+                        Münazara İpuçları
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-check-circle text-success me-2"></i>Güçlü Argümanlar İçin:</h6>
+                            <ul>
+                                <li>Somut örnekler ve veriler kullanın</li>
+                                <li>Karşıt görüşleri de dikkate alın</li>
+                                <li>Mantıklı bağlantılar kurun</li>
+                                <li>Güvenilir kaynaklara referans verin</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-exclamation-triangle text-warning me-2"></i>Kaçınılması Gerekenler:</h6>
+                            <ul>
+                                <li>Kişisel saldırılar</li>
+                                <li>Duygusal tepkiler</li>
+                                <li>Konudan sapma</li>
+                                <li>Kanıtsız iddialar</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

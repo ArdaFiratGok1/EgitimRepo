@@ -1,0 +1,206 @@
+﻿@model EgitimMaskotuApp.Models.SokratikChatViewModel
+@{
+    ViewData["Title"] = "Sokratik Öğretim - " + Model.Session.Konu;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                <div class="card-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border-radius: 20px 20px 0 0;">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="mb-0">
+                                <i class="fas fa-graduation-cap me-2"></i>
+                                @Model.Session.Konu
+                            </h4>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <span class="badge bg-light text-dark fs-6">
+                                Soru: @(Model.Session.QuestionCount + 1) / @Model.Session.MaxQuestions
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-0">
+                    <!-- Öğretmen Bilgisi -->
+                    <div class="bg-success text-white text-center p-2">
+                        <small><i class="fas fa-chalkboard-teacher me-1"></i> AI Öğretmeniniz Sizinle</small>
+                    </div>
+
+                    <!-- Chat Geçmişi -->
+                    <div class="chat-container" id="chatContainer">
+                        @if (Model.Session.QAHistory.Any())
+                        {
+                            @foreach (var qa in Model.Session.QAHistory)
+                            {
+                                <!-- Öğretmen Sorusu -->
+                                <div class="message ai-message">
+                                    <div class="d-flex align-items-start">
+                                        <div class="me-2">
+                                            <i class="fas fa-chalkboard-teacher text-success"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="fw-bold mb-1 text-success">Öğretmen</div>
+                                            <div>@qa.Question</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Öğrenci Cevabı -->
+                                <div class="message user-message">
+                                    <div class="d-flex align-items-start">
+                                        <div class="me-2">
+                                            <i class="fas fa-user-graduate"></i>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="fw-bold mb-1">Siz</div>
+                                            <div>@qa.Answer</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Öğretmen Geri Bildirimi -->
+                                @if (!string.IsNullOrEmpty(qa.TeacherFeedback))
+                                {
+                                    <div class="alert alert-info mx-3 mb-3">
+                                        <small>
+                                            <i class="fas fa-comment me-2"></i>
+                                            <strong>Geri Bildirim:</strong> @qa.TeacherFeedback
+                                        </small>
+                                    </div>
+                                }
+                            }
+                        }
+
+                        <!-- Mevcut Soru -->
+                        @if (!string.IsNullOrEmpty(Model.CurrentQuestion))
+                        {
+                            <div class="message ai-message">
+                                <div class="d-flex align-items-start">
+                                    <div class="me-2">
+                                        <i class="fas fa-chalkboard-teacher text-success"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="fw-bold mb-1 text-success">Öğretmen</div>
+                                        <div>@Model.CurrentQuestion</div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Cevap Gönderme Alanı -->
+                    @if (Model.Session.IsActive && Model.Session.QuestionCount < Model.Session.MaxQuestions)
+                    {
+                        <div class="p-4 border-top">
+                            <form asp-action="SubmitAnswer" method="post">
+                                <input type="hidden" name="currentQuestion" value="@Model.CurrentQuestion" />
+                                <div class="form-group mb-3">
+                                    <label class="form-label fw-bold">
+                                        <i class="fas fa-edit me-2"></i>Cevabınız:
+                                    </label>
+                                    <textarea name="answer" class="form-control" rows="4"
+                                              placeholder="Düşüncelerinizi açık ve detaylı bir şekilde yazın... Bilmiyorsanız 'bilmiyorum' diyebilirsiniz."
+                                              required style="border-radius: 10px;"></textarea>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-success btn-lg">
+                                        <i class="fas fa-paper-plane me-2"></i>
+                                        Cevabı Gönder
+                                    </button>
+                                </div>
+                                <small class="text-muted d-block text-center mt-2">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    💡 <strong>İpucu:</strong> Bilmediğiniz konularda "Bilmiyorum" deyin, size açıklama yapılacak!
+                                </small>
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-4 border-top text-center">
+                            <div class="alert alert-success">
+                                <h5><i class="fas fa-graduation-cap me-2"></i>Öğrenme Oturumu Tamamlandı!</h5>
+                                <p class="mb-0">Öğrenme sürecinizin özetini görmek için aşağıdaki butona tıklayın.</p>
+                            </div>
+                            <a href="@Url.Action("Summary")" class="btn btn-success btn-lg">
+                                <i class="fas fa-chart-bar me-2"></i>
+                                Öğrenme Özetini Gör
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="alert alert-danger">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <div>@error.ErrorMessage</div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- İlerleme Çubuğu -->
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-muted">Öğrenme İlerlemesi</small>
+                        <small class="text-muted">%@(((double)Model.Session.QuestionCount / Model.Session.MaxQuestions) * 100):F0</small>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-success" role="progressbar"
+                             style="width: @(((double)Model.Session.QuestionCount / Model.Session.MaxQuestions) * 100)%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Chat alanını otomatik scroll et
+        function scrollToBottom() {
+            const chatContainer = document.getElementById('chatContainer');
+            if (chatContainer) {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }
+
+        // Sayfa yüklendiğinde scroll et
+        document.addEventListener('DOMContentLoaded', scrollToBottom);
+
+        // Form submit edildiğinde loading göster
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function() {
+                const button = this.querySelector('button[type="submit"]');
+                if (button) {
+                    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Değerlendiriliyor...';
+                    button.disabled = true;
+                }
+            });
+        }
+
+        // Textarea auto-resize
+        const textarea = document.querySelector('textarea[name="answer"]');
+        if (textarea) {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+        }
+    </script>
+}
