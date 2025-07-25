@@ -579,5 +579,36 @@ Maksimum 3 cümle, Türkçe:
             roadmap.Categories = categories;
             return roadmap;
         }
+
+        /*
+        public async Task<string> SendRawPromptAsync(string prompt)
+        {
+            // Bu public metot, sınıfın kendi içindeki private SendRequestAsync metodunu çağırır.
+            return await SendRequestAsync(prompt);
+        }
+        */
+        
+        public async Task<string> TranslateToEnglishAcademicQueryAsync(string topic)
+        {
+            var prompt = $@"
+        Aşağıdaki Türkçe konu başlığını, uluslararası akademik bir veritabanında (CORE API gibi) arama yapmak için en uygun, kısa ve net İngilizce arama terimine çevir. 
+        Sadece çevrilmiş İngilizce arama terimini yaz, ek açıklama yapma.
+
+        Türkçe Konu: '{topic}'
+
+        İngilizce Arama Terimi:
+    ";
+
+            var response = await SendRequestAsync(prompt);
+
+            // API'den "Yanıt alınamadı." gibi bir hata dönerse, orijinal konuyu kullan
+            if (response.Contains("Hata") || response.Contains("alınamadı"))
+            {
+                return topic;
+            }
+
+            return response;
+        }
+        
     }
 }

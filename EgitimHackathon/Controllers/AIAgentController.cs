@@ -10,12 +10,12 @@ namespace EgitimMaskotuApp.Controllers
     public class AIAgentController : Controller
     {
         private readonly GeminiApiService _geminiService;
-        private readonly HttpClient _httpClient;
+        private readonly AIAgentContentService _contentService;
 
-        public AIAgentController(GeminiApiService geminiService, HttpClient httpClient)
+        public AIAgentController(GeminiApiService geminiService, AIAgentContentService contentService)
         {
             _geminiService = geminiService;
-            _httpClient = httpClient;
+            _contentService = contentService;
         }
 
         // Ana sayfa - Konu girişi
@@ -36,7 +36,6 @@ namespace EgitimMaskotuApp.Controllers
 
             try
             {
-                // AI ile yol haritası üret
                 var request = new RoadmapGenerationRequest
                 {
                     Topic = model.Topic,
@@ -47,19 +46,17 @@ namespace EgitimMaskotuApp.Controllers
                 };
 
                 var generatedRoadmap = await _geminiService.GenerateRoadmapAsync(request);
-
-                // Session oluştur
                 var session = new AIAgentSession
                 {
                     MainTopic = generatedRoadmap.MainTopic,
                     UserLevel = model.UserLevel
                 };
 
-                // Düğümleri oluştur
-                await CreateLearningNodesAsync(session, generatedRoadmap);
+                // Düğümleri oluştur (Bu metot artık sadece iskeleti oluşturuyor)
+                CreateLearningNodes(session, generatedRoadmap);
 
                 // Session'ı kaydet
-                HttpContext.Session.SetString("AIAgentSession", JsonSerializer.Serialize(session));
+                SaveSession(session);
 
                 return RedirectToAction("Dashboard");
             }
@@ -73,15 +70,12 @@ namespace EgitimMaskotuApp.Controllers
         // Ana dashboard
         public async Task<IActionResult> Dashboard()
         {
-            var sessionJson = HttpContext.Session.GetString("AIAgentSession");
-            if (string.IsNullOrEmpty(sessionJson))
+            var session = GetSession();
+            if (session == null)
             {
                 return RedirectToAction("Index");
             }
 
-            var session = JsonSerializer.Deserialize<AIAgentSession>(sessionJson);
-
-            // View model hazırla
             var viewModel = new AIAgentDashboardViewModel
             {
                 Session = session,
@@ -90,7 +84,6 @@ namespace EgitimMaskotuApp.Controllers
                 CompletionPercentage = CalculateCompletionPercentage(session)
             };
 
-            // AI önerisi al
             try
             {
                 viewModel.CurrentRecommendation = await _geminiService.GenerateLearningRecommendationAsync(session);
@@ -106,27 +99,35 @@ namespace EgitimMaskotuApp.Controllers
         // Düğüm detayı
         public async Task<IActionResult> NodeDetail(string nodeId)
         {
-            var sessionJson = HttpContext.Session.GetString("AIAgentSession");
-            if (string.IsNullOrEmpty(sessionJson))
+            var session = GetSession();
+            if (session == null)
             {
                 return RedirectToAction("Index");
             }
 
-            var session = JsonSerializer.Deserialize<AIAgentSession>(sessionJson);
             var node = session.Nodes.FirstOrDefault(n => n.Id == nodeId);
-
             if (node == null)
             {
                 return NotFound();
             }
 
-            // Eğer içerik henüz üretilmemişse üret
-            if (string.IsNullOrEmpty(node.AIExplanation))
+            // Eğer içerik henüz üretilmemişse, AIAgentContentService'i kullanarak üret.
+            if (string.IsNullOrEmpty(node.AIExplanation) ||
+                string.IsNullOrEmpty(node.VideoUrl) ||
+                string.IsNullOrEmpty(node.ArticleUrl))
             {
-                await PopulateNodeContentAsync(node, session.UserLevel);
+                try
+                {
+                    // === DEĞİŞİKLİK BURADA: Eksik olan 'session.UserLevel' parametresi eklendi ===
+                    node = await _contentService.EnrichNodeWithContentAsync(node, session.UserLevel);
 
-                // Session'ı güncelle
-                HttpContext.Session.SetString("AIAgentSession", JsonSerializer.Serialize(session));
+                    // Session'ı güncelle
+                    SaveSession(session);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Node enrichment error: {ex.Message}");
+                }
             }
 
             var viewModel = new NodeDetailViewModel
@@ -140,28 +141,60 @@ namespace EgitimMaskotuApp.Controllers
 
             return View(viewModel);
         }
-
         // Düğümü tamamla
         [HttpPost]
         public IActionResult CompleteNode(string nodeId)
         {
-            var sessionJson = HttpContext.Session.GetString("AIAgentSession");
-            if (string.IsNullOrEmpty(sessionJson))
+            var session = GetSession();
+            if (session == null)
             {
-                return RedirectToAction("Index");
+                // Session yoksa hata döndür veya Index'e yönlendir.
+                // API çağrısı için JSON hatası daha uygun olabilir.
+                return Json(new { success = false, message = "Oturum bulunamadı." });
             }
-
-            var session = JsonSerializer.Deserialize<AIAgentSession>(sessionJson);
 
             if (!session.CompletedNodeIds.Contains(nodeId))
             {
                 session.CompletedNodeIds.Add(nodeId);
                 session.LastAccessedAt = DateTime.Now;
-
-                HttpContext.Session.SetString("AIAgentSession", JsonSerializer.Serialize(session));
+                SaveSession(session);
             }
 
-            return RedirectToAction("Dashboard");
+            return Json(new { success = true, message = "Konu tamamlandı." });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EnrichFullRoadmap()
+        {
+            var session = GetSession();
+            if (session == null)
+            {
+                return BadRequest(new { error = "Oturum bulunamadı." });
+            }
+
+            var enrichedSession = await _contentService.EnrichSessionWithContentAsync(session);
+            SaveSession(enrichedSession);
+
+            return Ok(new { message = "Yol haritası içeriği başarıyla zenginleştirildi." });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetContentSuggestions(string topic)
+        {
+            if (string.IsNullOrWhiteSpace(topic))
+            {
+                return BadRequest(new { error = "Konu başlığı boş olamaz." });
+            }
+
+            try
+            {
+                var suggestions = await _contentService.GetContentSuggestionsAsync(topic);
+                return PartialView("_ContentSuggestionsPartial", suggestions); // Önerileri bir partial view ile döndür
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
 
         // Progress sayfası
@@ -200,8 +233,50 @@ namespace EgitimMaskotuApp.Controllers
         }
 
         // ========== PRIVATE HELPER METODLARI ==========
+        /*
+        public async Task<string> TranslateToEnglishAcademicQueryAsync(string topic)
+        {
+            var prompt = $@"
+        Aşağıdaki Türkçe konu başlığını, uluslararası akademik bir veritabanında (CORE API gibi) arama yapmak için en uygun, kısa ve net İngilizce arama terimine çevir. 
+        Sadece çevrilmiş İngilizce arama terimini yaz, ek açıklama yapma.
 
-        private async Task CreateLearningNodesAsync(AIAgentSession session, GeneratedRoadmap roadmap)
+        Örnek 1:
+        Türkçe Konu: 'Basketbolun Tarihi ve Kuralları'
+        İngilizce Arama Terimi: History and Rules of Basketball
+
+        Örnek 2:
+        Türkçe Konu: 'Kuantum Fiziğine Giriş'
+        İngilizce Arama Terimi: Introduction to Quantum Physics
+
+        Şimdi senin sıran:
+        Türkçe Konu: '{topic}'
+
+        İngilizce Arama Terimi:
+    ";
+
+            var response = await _geminiService.SendRawPromptAsync(prompt);
+
+            // API'den "Yanıt alınamadı." gibi bir hata dönerse veya boş dönerse, orijinal konuyu kullan
+            if (string.IsNullOrWhiteSpace(response) || response.Contains("Hata") || response.Contains("alınamadı"))
+            {
+                return topic;
+            }
+
+            return response.Trim(); // Başındaki ve sonundaki boşlukları temizle
+        }
+        */
+        private AIAgentSession GetSession()
+        {
+            var sessionJson = HttpContext.Session.GetString("AIAgentSession");
+            return string.IsNullOrEmpty(sessionJson) ? null : JsonSerializer.Deserialize<AIAgentSession>(sessionJson);
+        }
+
+        private void SaveSession(AIAgentSession session)
+        {
+            HttpContext.Session.SetString("AIAgentSession", JsonSerializer.Serialize(session));
+        }
+
+        private void CreateLearningNodes(AIAgentSession session, GeneratedRoadmap roadmap)
         {
             var nodes = new List<LearningNode>();
             int nodeIndex = 0;
@@ -234,178 +309,7 @@ namespace EgitimMaskotuApp.Controllers
             session.Nodes = nodes;
         }
 
-        private async Task PopulateNodeContentAsync(LearningNode node, string userLevel)
-        {
-            try
-            {
-                // AI açıklaması üret
-                node.AIExplanation = await _geminiService.GenerateTopicExplanationAsync(
-                    node.Title, userLevel, $"Kategori: {node.Category}");
-
-                // Video arama sorgusu üret
-                var (videoQuery, expectedVideoTitle) = await _geminiService.GenerateVideoSearchAsync(node.Title);
-
-                // Makale arama sorgusu üret
-                var (articleQuery, expectedArticleTitle) = await _geminiService.GenerateArticleSearchAsync(node.Title);
-
-                // Mock video ve makale linkleri (gerçek uygulamada YouTube ve Web API kullanılacak)
-                node.VideoUrl = await SearchYouTubeVideo(videoQuery);
-                node.VideoTitle = expectedVideoTitle;
-                node.ArticleUrl = await SearchWebArticle(articleQuery);
-                node.ArticleTitle = expectedArticleTitle;
-                node.ArticleSource = "Web";
-            }
-            catch (Exception ex)
-            {
-                // Hata durumunda varsayılan değerler
-                node.AIExplanation = $"{node.Title} konusu hakkında detaylı bilgi yükleniyor...";
-                node.VideoTitle = "Video yükleniyor...";
-                node.ArticleTitle = "Makale yükleniyor...";
-            }
-        }
-
-        private async Task<string> SearchYouTubeVideo(string query)
-        {
-            // Mock implementation - gerçek uygulamada YouTube Data API kullanılacak
-            var mockVideos = new Dictionary<string, string>
-            {
-                {"yapay zeka", "https://www.youtube.com/watch?v=dQw4w9WgXcQ"},
-                {"makine öğrenmesi", "https://www.youtube.com/watch?v=dQw4w9WgXcQ"},
-                {"algoritma", "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}
-            };
-
-            var normalizedQuery = query.ToLower();
-            var matchingVideo = mockVideos.FirstOrDefault(kv =>
-                normalizedQuery.Contains(kv.Key.ToLower())).Value;
-
-            return matchingVideo ?? "https://www.youtube.com/results?search_query=" + Uri.EscapeDataString(query);
-        }
-
-        private async Task<string> SearchWebArticle(string query)
-        {
-            // Mock implementation - gerçek uygulamada Web Search API kullanılacak
-            var mockArticles = new Dictionary<string, string>
-            {
-                {"yapay zeka", "https://tr.wikipedia.org/wiki/Yapay_zeka"},
-                {"makine öğrenmesi", "https://medium.com/@example/makine-ogrenmesi"},
-                {"algoritma", "https://www.example.com/algoritma-rehberi"}
-            };
-
-            var normalizedQuery = query.ToLower();
-            var matchingArticle = mockArticles.FirstOrDefault(kv =>
-                normalizedQuery.Contains(kv.Key.ToLower())).Value;
-
-            return matchingArticle ?? "https://www.google.com/search?q=" + Uri.EscapeDataString(query);
-        }
-
-        /* Burasını kullanacağım. Şu anda mock data kullanıyor. Youtube API ve Bing Search API kullanacağım
-        // YouTube API için (appsettings.json'a API key ekleyin)
-        private async Task<string> SearchYouTubeVideo(string query)
-        {
-            var apiKey = "YOUR_YOUTUBE_API_KEY";
-            var searchUrl = $"https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q={Uri.EscapeDataString(query)}&type=video&key={apiKey}";
-
-            try
-            {
-                var response = await _httpClient.GetStringAsync(searchUrl);
-                var result = JsonSerializer.Deserialize<YouTubeSearchResponse>(response);
-                return $"https://www.youtube.com/watch?v={result.items[0].id.videoId}";
-            }
-            catch
-            {
-                return "https://www.youtube.com/results?search_query=" + Uri.EscapeDataString(query);
-            }
-        }
-
-        // Web arama için (Bing Search API kullanabilirsiniz)
-        private async Task<string> SearchWebArticle(string query)
-        {
-            // Bing Search API veya Google Custom Search API kullanabilirsiniz
-            // Şimdilik basit bir Google arama linki döndürüyor
-            return "https://www.google.com/search?q=" + Uri.EscapeDataString(query + " makale rehber");
-        }
-
-        */
-
-        /* Burayı da Gemini hazırladı bunu da kullanabilirim.
-        public async Task<string> SearchYouTubeVideoAsync(string query)
-    {
-        // API anahtarını güvenli bir şekilde appsettings.json'dan okuyoruz
-        var apiKey = _configuration["ApiKeys:YouTube"];
-        if (string.IsNullOrEmpty(apiKey))
-        {
-            // Anahtar yoksa, varsayılan arama linkini döndür
-            return "https://www.youtube.com/results?search_query=" + Uri.EscapeDataString(query);
-        }
-
-        var searchUrl = $"https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=1&q={Uri.EscapeDataString(query)}&type=video&key={apiKey}";
-
-        try
-        {
-            var response = await _httpClient.GetStringAsync(searchUrl);
-            var result = JsonSerializer.Deserialize<YouTubeSearchResponse>(response);
-
-            // ÖNEMLİ: Sonuçların null veya boş olup olmadığını kontrol ediyoruz
-            if (result?.Items != null && result.Items.Any())
-            {
-                var videoId = result.Items[0].Id?.VideoId;
-                if (!string.IsNullOrEmpty(videoId))
-                {
-                    return $"https://www.youtube.com/watch?v={videoId}";
-                }
-            }
-
-            // Sonuç bulunamazsa, varsayılan arama linkini döndür
-            return "https://www.youtube.com/results?search_query=" + Uri.EscapeDataString(query);
-        }
-        catch (HttpRequestException ex)
-        {
-            // Hata durumunda loglama yapabilirsiniz. Örn: _logger.LogError(ex, "YouTube API request failed.");
-            return "https://www.youtube.com/results?search_query=" + Uri.EscapeDataString(query);
-        }
-    }
-
-    // --- Geliştirilmiş Web Arama Metodu (Bing API Örneği) ---
-    public async Task<string> SearchWebArticleAsync(string query)
-    {
-        var apiKey = _configuration["ApiKeys:BingSearch"];
-        if (string.IsNullOrEmpty(apiKey))
-        {
-            return "https://www.google.com/search?q=" + Uri.EscapeDataString(query);
-        }
-
-        var searchUrl = $"https://api.bing.microsoft.com/v7.0/search?q={Uri.EscapeDataString(query)}&count=1";
-        
-        var request = new HttpRequestMessage(HttpMethod.Get, searchUrl);
-        // Bing API, anahtarı header'da bekler
-        request.Headers.Add("Ocp-Apim-Subscription-Key", apiKey);
-
-        try
-        {
-            var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode(); // HTTP 2xx dışında bir kod varsa hata fırlatır
-
-            var content = await response.Content.ReadAsStringAsync();
-            // Not: Bing'den gelen JSON'ı deserialize etmek için de ilgili DTO sınıflarını oluşturmanız gerekir.
-            // Bu örnekte, basitlik adına ilk linki manuel olarak buluyoruz.
-            // Gerçek uygulamada JsonDocument veya özel DTO'lar kullanın.
-            using (var jsonDoc = JsonDocument.Parse(content))
-            {
-                var firstUrl = jsonDoc.RootElement
-                                      .GetProperty("webPages")
-                                      .GetProperty("value")[0]
-                                      .GetProperty("url")
-                                      .GetString();
-                
-                return firstUrl ?? "https://www.google.com/search?q=" + Uri.EscapeDataString(query);
-            }
-        }
-        catch (Exception ex) // HttpRequestException, JsonException vb. yakalar
-        {
-            // Hata durumunda loglama yapabilirsiniz.
-            return "https://www.google.com/search?q=" + Uri.EscapeDataString(query);
-        }
-    }*/
+     
         private List<LearningNode> GetAvailableNodes(AIAgentSession session)
         {
             // Önkoşulları tamamlanmış ve henüz başlanmamış düğümler
@@ -457,6 +361,8 @@ namespace EgitimMaskotuApp.Controllers
 
             return colors.ContainsKey(categoryName) ? colors[categoryName] : "#6c757d";
         }
+
+
 
 
     }
