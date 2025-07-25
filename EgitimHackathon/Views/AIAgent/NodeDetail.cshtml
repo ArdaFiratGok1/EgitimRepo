@@ -277,7 +277,8 @@ else
                             {
                                 <i class="fas fa-play-circle fa-3x text-primary mb-2"></i>
                                 <h6 class="text-primary">Öğrenmeye Başlayın</h6>
-                                <form method="post" action="@Url.Action("CompleteNode")">
+
+                                <form id="completeNodeForm">
                                     <input type="hidden" name="nodeId" value="@Model.CurrentNode.Id" />
                                     <button type="submit" class="btn btn-success btn-sm mt-2">
                                         <i class="fas fa-check me-1"></i> Tamamlandı Olarak İşaretle
@@ -286,6 +287,58 @@ else
                             }
                         </div>
                     </div>
+
+                    @section Scripts {
+                        <script>
+                            // Sayfa yüklendiğinde çalışacak olan JavaScript kodu
+                            document.addEventListener('DOMContentLoaded', function() {
+                                // ID'si 'completeNodeForm' olan formu seç
+                                const form = document.getElementById('completeNodeForm');
+
+                                // Eğer form sayfada varsa (yani konu henüz tamamlanmamışsa)
+                                if (form) {
+                                    // Formun 'submit' olayını dinle
+                                    form.addEventListener('submit', function(event) {
+                                        // 1. Tarayıcının varsayılan form gönderme davranışını engelle
+                                        event.preventDefault();
+
+                                        // Butonu geçici olarak devre dışı bırak ve "Kaydediliyor..." yaz
+                                        const button = form.querySelector('button[type="submit"]');
+                                        button.disabled = true;
+                                        button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Kaydediliyor...';
+
+                                        // Formdaki verileri al
+                                        const formData = new FormData(form);
+
+                                        // 2. Arka planda Controller'a POST isteği gönder
+                                        fetch('@Url.Action("CompleteNode", "AIAgent")', {
+                                            method: 'POST',
+                                            body: formData
+                                        })
+                                        .then(response => response.json()) // Dönen yanıtı JSON olarak işle
+                                        .then(data => {
+                                            // 3. Yanıt başarılıysa, kullanıcıyı Dashboard'a yönlendir
+                                            if (data.success) {
+                                                window.location.href = '@Url.Action("Dashboard", "AIAgent")';
+                                            } else {
+                                                // Hata durumunda butonu tekrar aktif et ve mesaj göster
+                                                alert('Bir hata oluştu: ' + data.message);
+                                                button.disabled = false;
+                                                button.innerHTML = '<i class="fas fa-check me-1"></i> Tamamlandı Olarak İşaretle';
+                                            }
+                                        })
+                                        .catch(error => {
+                                            // Ağ hatası gibi durumlarda butonu tekrar aktif et ve hata göster
+                                            console.error('Hata:', error);
+                                            alert('İstek gönderilirken bir hata oluştu.');
+                                            button.disabled = false;
+                                            button.innerHTML = '<i class="fas fa-check me-1"></i> Tamamlandı Olarak İşaretle';
+                                        });
+                                    });
+                                }
+                            });
+                        </script>
+            }
 
                     <!-- Sonraki Konular -->
                     @if (Model.NextNodes != null && Model.NextNodes.Any())
