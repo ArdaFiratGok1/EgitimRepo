@@ -10,7 +10,11 @@
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime LastAccessedAt { get; set; } = DateTime.Now;
         public bool IsActive { get; set; } = true;
+
+        public List<QuizHistory> QuizHistory { get; set; } = new();
     }
+
+
 
     // Öğrenme Düğümü (Her bir konuyu temsil eder)
     public class LearningNode

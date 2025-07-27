@@ -580,13 +580,6 @@ Maksimum 3 cümle, Türkçe:
             return roadmap;
         }
 
-        /*
-        public async Task<string> SendRawPromptAsync(string prompt)
-        {
-            // Bu public metot, sınıfın kendi içindeki private SendRequestAsync metodunu çağırır.
-            return await SendRequestAsync(prompt);
-        }
-        */
         
         public async Task<string> TranslateToEnglishAcademicQueryAsync(string topic)
         {
@@ -609,6 +602,44 @@ Maksimum 3 cümle, Türkçe:
 
             return response;
         }
+
+        public async Task<QuizGenerationResponse> GenerateQuizAsync(string topic, string userLevel, int questionCount = 10)
+        {
+            var prompt = $@"
+        'Aşağıdaki '{topic}' konusu hakkında, {userLevel} seviyesindeki bir kullanıcı için {questionCount} soruluk çoktan seçmeli bir test hazırla.
         
+        Lütfen MUTLAKA aşağıdaki JSON formatında, başka hiçbir ek metin olmadan yanıt ver. Her sorunun SADECE BİR doğru cevabı olmalı.
+
+        JSON Formatı:
+        {{
+          ""questions"": [
+            {{
+              ""question"": ""[Soru metni buraya]"",
+              ""answerOptions"": [
+                {{ ""text"": ""[Seçenek A]"", ""rationale"": ""[Bu seçeneğin neden doğru/yanlış olduğunun açıklaması]"", ""isCorrect"": false }},
+                {{ ""text"": ""[Seçenek B]"", ""rationale"": ""[Bu seçeneğin neden doğru/yanlış olduğunun açıklaması]"", ""isCorrect"": true }},
+                {{ ""text"": ""[Seçenek C]"", ""rationale"": ""[Bu seçeneğin neden doğru/yanlış olduğunun açıklaması]"", ""isCorrect"": false }},
+                {{ ""text"": ""[Seçenek D]"", ""rationale"": ""[Bu seçeneğin neden doğru/yanlış olduğunun açıklaması]"", ""isCorrect"": false }}
+              ],
+              ""hint"": ""[Öğrenciye yardımcı olacak bir ipucu]""
+            }}
+          ]
+        }}
+    ";
+
+            var responseText = await SendRequestAsync(prompt);
+
+            try
+            {
+                var cleanedJson = responseText.Replace("```json", "").Replace("```", "").Trim();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                return JsonSerializer.Deserialize<QuizGenerationResponse>(cleanedJson, options);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[DEBUG] Gemini Quiz JSON Parse Hatası: {ex.Message}");
+                return new QuizGenerationResponse(); // Hata durumunda boş bir sınav döndür
+            }
+        }
     }
 }

@@ -197,74 +197,7 @@ namespace EgitimMaskotuApp.Controllers
             }
         }
 
-        // Progress sayfası
-        public async Task<IActionResult> Progress()
-        {
-            var sessionJson = HttpContext.Session.GetString("AIAgentSession");
-            if (string.IsNullOrEmpty(sessionJson))
-            {
-                return RedirectToAction("Index");
-            }
 
-            var session = JsonSerializer.Deserialize<AIAgentSession>(sessionJson);
-
-            // Mock user progress data (gerçek uygulamada veritabanından gelecek)
-            var userProgresses = session.CompletedNodeIds.Select(nodeId => new UserProgress
-            {
-                SessionId = session.Id,
-                NodeId = nodeId,
-                IsCompleted = true,
-                CompletedAt = DateTime.Now.AddDays(-new Random().Next(0, 7)),
-                TimeSpentMinutes = new Random().Next(10, 45)
-            }).ToList();
-
-            ViewBag.ProgressAnalysis = await _geminiService.GenerateProgressAnalysisAsync(session, userProgresses);
-            ViewBag.Session = session;
-            ViewBag.UserProgresses = userProgresses;
-
-            return View();
-        }
-
-        // Yeni roadmap oluştur
-        public IActionResult NewRoadmap()
-        {
-            HttpContext.Session.Remove("AIAgentSession");
-            return RedirectToAction("Index");
-        }
-
-        // ========== PRIVATE HELPER METODLARI ==========
-        /*
-        public async Task<string> TranslateToEnglishAcademicQueryAsync(string topic)
-        {
-            var prompt = $@"
-        Aşağıdaki Türkçe konu başlığını, uluslararası akademik bir veritabanında (CORE API gibi) arama yapmak için en uygun, kısa ve net İngilizce arama terimine çevir. 
-        Sadece çevrilmiş İngilizce arama terimini yaz, ek açıklama yapma.
-
-        Örnek 1:
-        Türkçe Konu: 'Basketbolun Tarihi ve Kuralları'
-        İngilizce Arama Terimi: History and Rules of Basketball
-
-        Örnek 2:
-        Türkçe Konu: 'Kuantum Fiziğine Giriş'
-        İngilizce Arama Terimi: Introduction to Quantum Physics
-
-        Şimdi senin sıran:
-        Türkçe Konu: '{topic}'
-
-        İngilizce Arama Terimi:
-    ";
-
-            var response = await _geminiService.SendRawPromptAsync(prompt);
-
-            // API'den "Yanıt alınamadı." gibi bir hata dönerse veya boş dönerse, orijinal konuyu kullan
-            if (string.IsNullOrWhiteSpace(response) || response.Contains("Hata") || response.Contains("alınamadı"))
-            {
-                return topic;
-            }
-
-            return response.Trim(); // Başındaki ve sonundaki boşlukları temizle
-        }
-        */
         private AIAgentSession GetSession()
         {
             var sessionJson = HttpContext.Session.GetString("AIAgentSession");
@@ -362,8 +295,130 @@ namespace EgitimMaskotuApp.Controllers
             return colors.ContainsKey(categoryName) ? colors[categoryName] : "#6c757d";
         }
 
+        [HttpGet]
+        public async Task<IActionResult> StartQuiz(string topic)
+        {
+            try
+            {
+                var session = GetSession();
+                var userLevel = session?.UserLevel ?? "Başlangıç";
 
+                var quizData = await _geminiService.GenerateQuizAsync(topic, userLevel, 10); // 10 soruluk bir sınav, istersen değişiyo
 
+                var quizSession = new QuizSession
+                {
+                    Topic = topic,
+                    Questions = quizData.Questions
+                };
+
+                // Sınavı HTTP Session'a kaydediyoruz
+                HttpContext.Session.SetString("QuizSession", JsonSerializer.Serialize(quizSession));
+
+                return View("Quiz", quizSession);
+            }
+            catch (Exception ex)
+            {
+                // Hata durumunda kullanıcıyı dashboard'a geri yönlendir
+                TempData["ErrorMessage"] = "Sınav oluşturulurken bir hata oluştu: " + ex.Message;
+                return RedirectToAction("Dashboard");
+            }
+        }
+
+        // Kullanıcının sınav cevaplarını alır ve sonucu gösterir
+        [HttpPost]
+        public IActionResult SubmitQuiz(Dictionary<int, int> userAnswers, int timeSpentSeconds)
+        {
+            var quizJson = HttpContext.Session.GetString("QuizSession");
+            if (string.IsNullOrEmpty(quizJson))
+            {
+                return RedirectToAction("Index"); // Session yoksa başa dön
+            }
+
+            var quizSession = JsonSerializer.Deserialize<QuizSession>(quizJson);
+            quizSession.UserAnswers = userAnswers;
+            quizSession.IsSubmitted = true;
+
+            // Puanı hesapla
+            int correctAnswers = 0;
+            for (int i = 0; i < quizSession.Questions.Count; i++)
+            {
+                if (userAnswers.ContainsKey(i))
+                {
+                    int userAnswerIndex = userAnswers[i];
+                    if (quizSession.Questions[i].AnswerOptions[userAnswerIndex].IsCorrect)
+                    {
+                        correctAnswers++;
+                    }
+                }
+            }
+            quizSession.Score = (correctAnswers * 100) / quizSession.Questions.Count;
+
+            //
+            var roadmapSession = GetSession();
+            if (roadmapSession != null)
+            {
+                // 2. Yeni bir test sonucu nesnesi oluştur
+                var newQuizResult = new QuizHistory
+                {
+                    Topic = quizSession.Topic,
+                    Score = quizSession.Score,
+                    CorrectAnswers = correctAnswers,
+                    TotalQuestions = quizSession.Questions.Count,
+                    TimeSpentSeconds = timeSpentSeconds
+                };
+
+                // 3. Bu sonucu yol haritası session'ındaki listeye ekle
+                roadmapSession.QuizHistory.Add(newQuizResult);
+
+                // 4. Güncellenmiş yol haritası session'ını kaydet
+                SaveSession(roadmapSession);
+            }
+            //
+            // Sonucu session'a geri kaydet
+            HttpContext.Session.SetString("QuizSession", JsonSerializer.Serialize(quizSession));
+
+            return View("QuizResult", quizSession);
+        }
+
+        public async Task<IActionResult> Progress()
+        {
+            var session = GetSession(); // Zaten var olan yardımcı metodun
+            if (session == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            // Gerçek uygulamada bu veriler veritabanından gelir. Şimdilik session'dan alıyoruz.
+            var completedNodes = session.Nodes.Where(n => session.CompletedNodeIds.Contains(n.Id)).ToList();
+            var totalTimeSpent = completedNodes.Sum(n => n.EstimatedMinutes); // Basit bir tahmin
+
+            // Gemini'den analiz metni al
+            string analysis = "İlerleme analizi alınamadı.";
+            try
+            {
+                // Bu metodu daha önce oluşturmuştuk, şimdi kullanıyoruz.
+                // `userProgresses` için geçici bir liste oluşturalım.
+                var userProgresses = completedNodes.Select(n => new UserProgress { TimeSpentMinutes = n.EstimatedMinutes }).ToList();
+                analysis = await _geminiService.GenerateProgressAnalysisAsync(session, userProgresses);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Progress analysis error: {ex.Message}");
+                analysis = "Harika bir ilerleme kaydettin, öğrenmeye devam et!";
+            }
+
+            var viewModel = new ProgressModel
+            {
+                Session = session,
+                CompletedNodes = completedNodes,
+                CompletionPercentage = CalculateCompletionPercentage(session), // Zaten var olan yardımcı metodun
+                ProgressAnalysis = analysis,
+                TotalTimeSpentMinutes = totalTimeSpent,
+                QuizHistory = session.QuizHistory.OrderByDescending(q => q.CompletedAt).ToList() // En yeniden eskiye sırala
+            };
+
+            return View(viewModel); // Yeni oluşturacağımız Progress.cshtml'e modeli gönder
+        }
 
     }
 }

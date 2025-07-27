@@ -224,6 +224,91 @@ else
             </div>
 
             <div class="col-lg-4">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0">
+                            <i class="fas fa-arrow-right me-2"></i>
+                            Şimdi Çalışabilirsiniz
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.AvailableNodes.Any())
+                        {
+                            @foreach (var node in Model.AvailableNodes.Take(3))
+                            {
+                                <div class="d-flex align-items-center mb-2 p-2 rounded bg-light">
+                                    <i class="fas fa-play-circle text-primary me-2"></i>
+                                    <div class="flex-grow-1">
+                                        <a href="@Url.Action("NodeDetail", new { nodeId = node.Id })"
+                                           class="text-decoration-none">
+                                            <small class="fw-bold">@node.Title</small>
+                                        </a>
+                                        <br>
+                                        <small class="text-muted">@node.EstimatedMinutes dk</small>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted text-center mb-0">
+                                <i class="fas fa-graduation-cap fa-2x mb-2 d-block"></i>
+                                Tebrikler! Tüm konuları tamamladınız.
+                            </p>
+                        }
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0">
+                            <i class="fas fa-check me-2"></i>
+                            Son Tamamlananlar
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.CompletedNodes.Any())
+                        {
+                            @foreach (var node in Model.CompletedNodes.TakeLast(3).Reverse())
+                            {
+                                <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded bg-light">
+                                    <div class="me-2">
+                                        <i class="fas fa-check-circle text-success me-2"></i>
+                                        <span class="fw-bold">@node.Title</span>
+                                    </div>
+                                    <div>
+                                        @* === İSTEDİĞİN BUTON TAM OLARAK BURADA === *@
+                                        <a href="@Url.Action("StartQuiz", "AIAgent", new { topic = node.Title })" class="btn btn-sm btn-info" title="Kendini Test Et">
+                                            <i class="fas fa-vial"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted text-center mb-0">
+                                <i class="fas fa-tasks fa-2x mb-2 d-block"></i>
+                                Henüz tamamlanan konu yok.
+                            </p>
+                        }
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="@Url.Action("Progress")" class="btn btn-outline-primary">
+                                <i class="fas fa-chart-line me-2"></i> 
+                                İlerleme Raporu
+                            </a>
+                            <a href="@Url.Action("Index", "Home")" class="btn btn-outline-info">
+                                <i class="fas fa-home me-2"></i>
+                                Ana Sayfa
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

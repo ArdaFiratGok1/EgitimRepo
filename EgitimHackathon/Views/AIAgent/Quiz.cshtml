@@ -1,0 +1,80 @@
+﻿@model EgitimMaskotuApp.Models.QuizSession
+
+@{
+    ViewData["Title"] = $"{Model.Topic} - Sınav";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header text-center py-4 bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">@Model.Topic Testi</h2>
+
+                    @* YENİ EKLENEN KISIM: Zamanlayıcı Göstergesi *@
+                    <div id="timer" class="badge bg-light text-dark fs-6">
+                        <i class="fas fa-clock me-1"></i>
+                        <span>00:00</span>
+                    </div>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <form id="quizForm" asp-action="SubmitQuiz" method="post">
+
+                        @* YENİ EKLENEN KISIM: Geçen süreyi tutacak gizli alan *@
+                        <input type="hidden" name="timeSpentSeconds" id="timeSpentSeconds" value="0" />
+
+                        @for (int i = 0; i < Model.Questions.Count; i++)
+                        {
+                            var question = Model.Questions[i];
+                            <div class="mb-5">
+                                <h5 class="fw-bold">Soru @(i + 1): @question.Question</h5>
+                                <hr />
+                                <div class="list-group">
+                                    @for (int j = 0; j < question.AnswerOptions.Count; j++)
+                                    {
+                                        var option = question.AnswerOptions[j];
+                                        <label class="list-group-item list-group-item-action">
+                                            <input type="radio" name="userAnswers[@i]" value="@j" class="form-check-input me-2" required />
+                                            @option.Text
+                                        </label>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">Sınavı Bitir</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* YENİ EKLENEN KISIM: Zamanlayıcıyı çalıştıracak JavaScript *@
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const timerDisplay = document.querySelector('#timer span');
+            const timeSpentInput = document.getElementById('timeSpentSeconds');
+            const quizForm = document.getElementById('quizForm');
+            let startTime = Date.now();
+
+            // Her saniye zamanlayıcıyı güncelle
+            const intervalId = setInterval(function () {
+                const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsedTime / 60).toString().padStart(2, '0');
+                const seconds = (elapsedTime % 60).toString().padStart(2, '0');
+
+                timerDisplay.textContent = `${minutes}:${seconds}`;
+                timeSpentInput.value = elapsedTime;
+            }, 1000);
+
+            // Form gönderildiğinde zamanlayıcıyı durdur
+            quizForm.addEventListener('submit', function() {
+                clearInterval(intervalId);
+            });
+        });
+    </script>
+}
