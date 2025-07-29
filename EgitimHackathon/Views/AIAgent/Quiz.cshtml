@@ -1,80 +1,665 @@
 ﻿@model EgitimMaskotuApp.Models.QuizSession
-
 @{
     ViewData["Title"] = $"{Model.Topic} - Sınav";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-lg border-0">
-                <div class="card-header text-center py-4 bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h2 class="mb-0">@Model.Topic Testi</h2>
-
-                    @* YENİ EKLENEN KISIM: Zamanlayıcı Göstergesi *@
-                    <div id="timer" class="badge bg-light text-dark fs-6">
-                        <i class="fas fa-clock me-1"></i>
-                        <span>00:00</span>
+<div class="quiz-container">
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Quiz Header -->
+                <div class="quiz-header-card card shadow-lg border-0 mb-4" style="border-radius: 25px;">
+                    <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 25px 25px 0 0;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="quiz-title-section">
+                                <h2 class="mb-2 fw-bold">
+                                    <i class="fas fa-clipboard-list me-3"></i>
+                                    @Model.Topic Testi
+                                </h2>
+                                <p class="mb-0 opacity-90">
+                                    <i class="fas fa-question-circle me-2"></i>
+                                    @Model.Questions.Count soru ile bilginizi test edin
+                                </p>
+                            </div>
+                            <div class="timer-section">
+                                <div id="timer" class="timer-display">
+                                    <div class="timer-circle">
+                                        <i class="fas fa-clock fa-2x mb-2"></i>
+                                        <div class="timer-text">
+                                            <span class="timer-time">00:00</span>
+                                            <div class="timer-label">Süre</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="card-body p-4 p-md-5">
-                    <form id="quizForm" asp-action="SubmitQuiz" method="post">
 
-                        @* YENİ EKLENEN KISIM: Geçen süreyi tutacak gizli alan *@
-                        <input type="hidden" name="timeSpentSeconds" id="timeSpentSeconds" value="0" />
+                <!-- Quiz Progress -->
+                <div class="quiz-progress-card card shadow-sm border-0 mb-4" style="border-radius: 15px;">
+                    <div class="card-body p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted">İlerleme</span>
+                            <span class="badge bg-primary" id="progress-text">0 / @Model.Questions.Count</span>
+                        </div>
+                        <div class="progress" style="height: 10px; border-radius: 10px;">
+                            <div class="progress-bar bg-gradient progress-bar-striped progress-bar-animated"
+                                 id="quiz-progress"
+                                 style="width: 0%; border-radius: 10px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                        @for (int i = 0; i < Model.Questions.Count; i++)
-                        {
-                            var question = Model.Questions[i];
-                            <div class="mb-5">
-                                <h5 class="fw-bold">Soru @(i + 1): @question.Question</h5>
-                                <hr />
-                                <div class="list-group">
+                <!-- Quiz Form -->
+                <form id="quizForm" asp-action="SubmitQuiz" method="post">
+                    <input type="hidden" name="timeSpentSeconds" id="timeSpentSeconds" value="0" />
+
+                    @for (int i = 0; i < Model.Questions.Count; i++)
+                    {
+                        var question = Model.Questions[i];
+                        <div class="question-card card shadow-lg border-0 mb-5" style="border-radius: 20px;" data-question="@i">
+                            <div class="card-header bg-light py-4" style="border-radius: 20px 20px 0 0;">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="question-number">
+                                        <span class="badge bg-primary fs-6 px-3 py-2 rounded-pill">
+                                            Soru @(i + 1)
+                                        </span>
+                                    </div>
+                                    <div class="question-indicator">
+                                        <div class="status-badge unanswered" id="status-@i">
+                                            <i class="fas fa-circle"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h5 class="question-text fw-bold mt-3 mb-0">@question.Question</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="options-container">
                                     @for (int j = 0; j < question.AnswerOptions.Count; j++)
                                     {
                                         var option = question.AnswerOptions[j];
-                                        <label class="list-group-item list-group-item-action">
-                                            <input type="radio" name="userAnswers[@i]" value="@j" class="form-check-input me-2" required />
-                                            @option.Text
-                                        </label>
+                                        <div class="option-item mb-3">
+                                            <label class="option-label w-100">
+                                                <input type="radio"
+                                                       name="userAnswers[@i]"
+                                                       value="@j"
+                                                       class="option-input d-none"
+                                                       data-question="@i"
+                                                       required />
+                                                <div class="option-content d-flex align-items-center p-3 rounded">
+                                                    <div class="option-circle me-3">
+                                                        <div class="option-inner"></div>
+                                                    </div>
+                                                    <div class="option-text flex-grow-1">
+                                                        @option.Text
+                                                    </div>
+                                                    <div class="option-selected-indicator">
+                                                        <i class="fas fa-arrow-right"></i>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
                                     }
                                 </div>
                             </div>
-                        }
-
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-success btn-lg">Sınavı Bitir</button>
                         </div>
-                    </form>
-                </div>
+                    }
+
+                    <!-- Submit Section -->
+                    <div class="submit-section">
+                        <div class="card shadow-lg border-0" style="border-radius: 20px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                            <div class="card-body text-center p-5 text-white">
+                                <div class="submit-icon mb-3">
+                                    <i class="fas fa-flag-checkered fa-3x"></i>
+                                </div>
+                                <h4 class="fw-bold mb-3">Sınavı Tamamlamaya Hazır mısınız?</h4>
+                                <p class="mb-4 opacity-90">
+                                    Tüm soruları yanıtladığınızdan emin olun.
+                                    Gönderildikten sonra değişiklik yapamazsınız.
+                                </p>
+                                <div class="d-grid">
+                                    <button type="submit" id="submitBtn" class="btn btn-light btn-lg rounded-pill px-5 py-3" disabled>
+                                        <i class="fas fa-paper-plane me-2"></i>
+                                        <span class="submit-text">Sınavı Bitir</span>
+                                    </button>
+                                </div>
+                                <div class="completion-status mt-3">
+                                    <span id="completion-message" class="text-white-50">
+                                        Lütfen tüm soruları yanıtlayın
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-@* YENİ EKLENEN KISIM: Zamanlayıcıyı çalıştıracak JavaScript *@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const timerDisplay = document.querySelector('#timer span');
+            // Timer functionality
+            const timerDisplay = document.querySelector('#timer .timer-time');
             const timeSpentInput = document.getElementById('timeSpentSeconds');
             const quizForm = document.getElementById('quizForm');
-            let startTime = Date.now();
+            const submitBtn = document.getElementById('submitBtn');
+            const progressBar = document.getElementById('quiz-progress');
+            const progressText = document.getElementById('progress-text');
+            const completionMessage = document.getElementById('completion-message');
 
-            // Her saniye zamanlayıcıyı güncelle
+            let startTime = Date.now();
+            let totalQuestions = @Model.Questions.Count;
+            let answeredQuestions = 0;
+
+            // Timer update
             const intervalId = setInterval(function () {
                 const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
                 const minutes = Math.floor(elapsedTime / 60).toString().padStart(2, '0');
                 const seconds = (elapsedTime % 60).toString().padStart(2, '0');
-
                 timerDisplay.textContent = `${minutes}:${seconds}`;
                 timeSpentInput.value = elapsedTime;
             }, 1000);
 
-            // Form gönderildiğinde zamanlayıcıyı durdur
-            quizForm.addEventListener('submit', function() {
-                clearInterval(intervalId);
+            // Answer selection handling
+            const optionInputs = document.querySelectorAll('.option-input');
+            optionInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const questionIndex = this.getAttribute('data-question');
+                    const questionCard = document.querySelector(`[data-question="${questionIndex}"]`);
+                    const statusBadge = document.getElementById(`status-${questionIndex}`);
+
+                    // Remove previous selections
+                    const allOptions = questionCard.querySelectorAll('.option-content');
+                    allOptions.forEach(option => {
+                        option.classList.remove('selected');
+                    });
+
+                    // Add selection to current option
+                    this.closest('.option-label').querySelector('.option-content').classList.add('selected');
+
+                    // Update status badge with neutral checkmark icon
+                    statusBadge.className = 'status-badge answered';
+                    statusBadge.innerHTML = '<i class="fas fa-check-square"></i>';
+
+                    // Update progress
+                    updateProgress();
+
+                    // Smooth scroll to next question
+                    const nextQuestionCard = document.querySelector(`[data-question="${parseInt(questionIndex) + 1}"]`);
+                    if (nextQuestionCard) {
+                        setTimeout(() => {
+                            nextQuestionCard.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'center'
+                            });
+                        }, 300);
+                    }
+                });
             });
+
+            function updateProgress() {
+                answeredQuestions = document.querySelectorAll('.option-input:checked').length;
+                const progressPercentage = (answeredQuestions / totalQuestions) * 100;
+
+                progressBar.style.width = progressPercentage + '%';
+                progressText.textContent = `${answeredQuestions} / ${totalQuestions}`;
+
+                if (answeredQuestions === totalQuestions) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.add('btn-pulse');
+                    completionMessage.textContent = 'Tüm sorular yanıtlandı! Sınavı bitirebilirsiniz.';
+                    completionMessage.classList.add('text-success');
+                } else {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.remove('btn-pulse');
+                    completionMessage.textContent = `${totalQuestions - answeredQuestions} soru daha kaldı`;
+                    completionMessage.classList.remove('text-success');
+                }
+            }
+
+            // Form submission
+            quizForm.addEventListener('submit', function(e) {
+                if (answeredQuestions < totalQuestions) {
+                    e.preventDefault();
+                    alert('Lütfen tüm soruları yanıtlayın!');
+                    return;
+                }
+
+                clearInterval(intervalId);
+
+                // Submit button animation
+                const submitText = document.querySelector('.submit-text');
+                submitBtn.disabled = true;
+                submitText.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Gönderiliyor...';
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key >= '1' && e.key <= '4') {
+                    const activeElement = document.activeElement;
+                    const questionCard = activeElement.closest('.question-card');
+                    if (questionCard) {
+                        const optionIndex = parseInt(e.key) - 1;
+                        const options = questionCard.querySelectorAll('.option-input');
+                        if (options[optionIndex]) {
+                            options[optionIndex].checked = true;
+                            options[optionIndex].dispatchEvent(new Event('change'));
+                        }
+                    }
+                }
+            });
+
+            // Initialize progress
+            updateProgress();
         });
     </script>
 }
+
+<style>
+    /* Ana Container */
+    .quiz-container {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+
+    /* Quiz Header */
+    .quiz-header-card {
+        position: relative;
+        overflow: hidden;
+    }
+
+        .quiz-header-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .quiz-header-card .card-header {
+            position: relative;
+            z-index: 1;
+        }
+
+    /* Timer Display */
+    .timer-display {
+        text-align: center;
+    }
+
+    .timer-circle {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    .timer-time {
+        font-size: 1.5rem;
+        font-weight: bold;
+        display: block;
+    }
+
+    .timer-label {
+        font-size: 0.8rem;
+        opacity: 0.8;
+        margin-top: 5px;
+    }
+
+    /* Progress Card */
+    .quiz-progress-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+    }
+
+    /* Question Cards */
+    .question-card {
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .question-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .question-card:hover::before {
+            left: 100%;
+        }
+
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+    /* Status Badges */
+    .status-badge {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+    }
+
+        .status-badge.unanswered {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+
+        .status-badge.answered {
+            background: #17a2b8;
+            color: white;
+            animation: checkmark 0.5s ease-out;
+        }
+
+    /* Option Styling */
+    .option-label {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .option-content {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .option-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,123,255,0.1), transparent);
+            transition: left 0.3s ease;
+        }
+
+        .option-content:hover::before {
+            left: 100%;
+        }
+
+        .option-content:hover {
+            border-color: #007bff;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,123,255,0.2);
+        }
+
+        .option-content.selected {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border-color: #007bff;
+            color: white;
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(0,123,255,0.3);
+        }
+
+    /* Option Circle */
+    .option-circle {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #dee2e6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .option-inner {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: transparent;
+        transition: all 0.3s ease;
+    }
+
+    .option-content.selected .option-circle {
+        border-color: white;
+    }
+
+    .option-content.selected .option-inner {
+        background: white;
+    }
+
+    /* Option Selected Indicator */
+    .option-selected-indicator {
+        opacity: 0;
+        transform: scale(0);
+        transition: all 0.3s ease;
+        color: inherit;
+    }
+
+    .option-content.selected .option-selected-indicator {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* Submit Section */
+    .submit-section {
+        position: relative;
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    .submit-icon {
+        animation: bounce 2s infinite;
+    }
+
+    /* Submit Button */
+    #submitBtn {
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        #submitBtn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        #submitBtn:not(:disabled) {
+            color: #28a745 !important;
+            font-weight: bold;
+        }
+
+            #submitBtn:not(:disabled):hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 40px rgba(40, 167, 69, 0.3);
+            }
+
+    .btn-pulse {
+        animation: pulse 2s infinite;
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+        transition: width 0.5s ease;
+        background: linear-gradient(45deg, #007bff, #0056b3);
+    }
+
+    /* Animations */
+    @@keyframes checkmark {
+        0%
+
+    {
+        transform: scale(0) rotate(0deg);
+    }
+
+    50% {
+        transform: scale(1.2) rotate(180deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(360deg);
+    }
+
+    }
+
+    @@keyframes fadeInUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    @@keyframes bounce {
+        0%, 20%, 50%, 80%, 100%
+
+    {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-10px);
+    }
+
+    60% {
+        transform: translateY(-5px);
+    }
+
+    }
+
+    @@keyframes pulse {
+        0%
+
+    {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
+
+    }
+
+    /* Question Text */
+    .question-text {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        color: #2c3e50;
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .quiz-container
+
+    {
+        padding: 1rem 0;
+    }
+
+    .quiz-header-card .d-flex {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .timer-section {
+        margin-top: 1rem;
+    }
+
+    .timer-circle {
+        padding: 15px;
+    }
+
+    .timer-time {
+        font-size: 1.2rem;
+    }
+
+    .question-text {
+        font-size: 1.1rem;
+    }
+
+    .option-content {
+        padding: 1rem !important;
+    }
+
+    .submit-section .card-body {
+        padding: 2rem !important;
+    }
+
+    }
+
+    /* Card Entry Animation */
+    .question-card {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+        .question-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .question-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .question-card:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+
+        .question-card:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+
+    /* Focus States */
+    .option-input:focus + .option-content {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    /* Accessibility */
+    @@media (prefers-reduced-motion: reduce) {
+        *
+
+    {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    }
+
+    /* Print Styles */
+    @@media print {
+        .timer-section, .submit-section
+
+    {
+        display: none;
+    }
+
+    .question-card {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+
+    }
+</style>

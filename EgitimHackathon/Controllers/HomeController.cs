@@ -28,7 +28,14 @@ namespace EgitimMaskotuApp.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public IActionResult Hakkimda()
+        {
+            return View();
+        }
     }
+
+
 
     public class ErrorViewModel
     {

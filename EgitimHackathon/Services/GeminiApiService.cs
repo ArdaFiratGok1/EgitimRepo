@@ -49,7 +49,16 @@ namespace EgitimMaskotuApp.Services
                     var responseJson = await response.Content.ReadAsStringAsync();
                     var geminiResponse = JsonSerializer.Deserialize<GeminiResponse>(responseJson);
 
-                    return geminiResponse?.candidates?.FirstOrDefault()?.content?.parts?.FirstOrDefault()?.text ?? "Yanıt alınamadı.";
+                    if (geminiResponse?.candidates?.Any() == true)
+                    {
+                        var parts = geminiResponse.candidates[0].content.parts;
+                        var fullText = string.Concat(parts.Select(p => p.text));
+                        return fullText;
+                    }
+                    else
+                    {
+                        return "Yanıt alınamadı.";
+                    }
                 }
                 else
                 {
@@ -198,7 +207,7 @@ DETAYLI_ANALIZ: Kullanıcı konuyu iyi savundu...
             if (string.IsNullOrWhiteSpace(result.Winner))
                 result.Winner = "Berabere";
             if (result.UserScore == 0)
-                result.UserScore = 50;
+                result.UserScore = 0;
             if (!result.GoodPoints.Any())
                 result.GoodPoints.Add("Münazaraya katılım gösterdiniz");
             if (!result.BadPoints.Any())

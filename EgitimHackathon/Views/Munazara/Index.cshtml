@@ -1,99 +1,282 @@
 ﻿@model EgitimMaskotuApp.Models.MunazaraStartViewModel
 @{
-    ViewData["Title"] = "Öğretici Münazara";
+    ViewData["Title"] = "Öğretici Münazara - AI Destekli Tartışma";
 }
 
-<div class="container">
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-lg border-0" style="border-radius: 20px;">
-                <div class="card-header text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0;">
-                    <h2 class="mb-0">
-                        <i class="fas fa-comments me-3"></i>
-                        Öğretici Münazara
-                    </h2>
+        <div class="col-lg-8">
+            <!-- Ana Başlık -->
+            <div class="text-center mb-5">
+                <div class="mb-4">
+                    <i class="fas fa-comments fa-4x text-orange mb-3"></i>
+
+                    <h1 class="display-5 fw-bold text-orange">AI Münazara Partneri</h1>
+                    <p class="lead text-muted">
+                        Yapay zeka ile karşılıklı münazara yaparak argümantasyon becerilerinizi geliştirin
+                    </p>
                 </div>
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <i class="fas fa-robot fa-3x text-primary mb-3"></i>
-                        <p class="lead">
-                            Münazara yapmak istediğiniz konuyu belirtin. Yapay zeka sizinle karşıt görüşte
-                            münazara yapacak ve sonunda performansınızı değerlendirecek.
+            </div>
+
+            <!-- Özellikler -->
+            <div class="row mb-5">
+                <div class="col-md-4 text-center">
+                    <div class="feature-card p-4">
+                        <i class="fas fa-balance-scale fa-3x text-success mb-3"></i>
+                        <h5>Objektif Değerlendirme</h5>
+                        <p class="text-muted">
+                            AI performansınızı tarafsız olarak analiz eder
                         </p>
                     </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="feature-card p-4">
+                        <i class="fas fa-handshake fa-3x text-danger mb-3"></i>
+                        <h5>Karşılıklı Tartışma</h5>
+                        <p class="text-muted">
+                            3'er mesajlık dengeli münazara deneyimi
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div class="feature-card p-4">
+                        <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+                        <h5>Beceri Geliştirme</h5>
+                        <p class="text-muted">
+                            Argümantasyon ve eleştirel düşünme becerilerinizi güçlendirin
+                        </p>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Form -->
+            <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%); color: white; border-radius: 20px 20px 0 0;">
+                    <h3 class="mb-0">
+                        <i class="fas fa-play me-2"></i>
+                        Münazara Konunuzu Belirleyin
+                    </h3>
+                </div>
+                <div class="card-body p-5">
                     <form asp-action="Start" method="post">
-                        <div class="form-group mb-4">
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger border-0 shadow-sm mb-4">
+                                <h6 class="alert-heading">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Lütfen aşağıdaki hataları düzeltin:
+                                </h6>
+                                <ul class="mb-0">
+                                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                                    {
+                                        <li>@error.ErrorMessage</li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+
+                        <!-- Konu -->
+                        <div class="mb-4">
                             <label asp-for="Konu" class="form-label fw-bold">
-                                <i class="fas fa-lightbulb me-2"></i>Münazara Konusu
+                                <i class="fas fa-lightbulb me-2 text-warning"></i>
+                                Münazara Konusu *
                             </label>
-                            <textarea asp-for="Konu" class="form-control" rows="4"
-                                      placeholder="Örnek: 'Sosyal medyanın gençler üzerindeki etkisi', 'Yapay zekanın iş hayatına etkileri', 'Çevrimiçi eğitim vs Yüz yüze eğitim' gibi tartışılabilir bir konu yazın..."
-                                      style="border-radius: 10px;"></textarea>
-                            <span asp-validation-for="Konu" class="text-danger"></span>
+                            <textarea asp-for="Konu"
+                                      class="form-control form-control-lg @(ViewData.ModelState["Konu"]?.Errors.Any() == true ? "is-invalid" : "")"
+                                      rows="4"
+                                      placeholder="Örn: Sosyal medyanın gençler üzerindeki etkisi, Yapay zekanın iş hayatına etkileri, Çevrimiçi eğitim vs Yüz yüze eğitim..."
+                                      style="border-radius: 12px;"></textarea>
+                            @if (ViewData.ModelState["Konu"]?.Errors.Any() == true)
+                            {
+                                <div class="invalid-feedback">
+                                    @ViewData.ModelState["Konu"].Errors.First().ErrorMessage
+                                </div>
+                            }
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Tartışılabilir ve iki taraflı olarak ele alınabilecek bir konu yazın
+                            </div>
                         </div>
 
-                        <div class="alert alert-info" role="alert">
+                        <!-- Münazara Süreci Açıklaması -->
+                        <div class="alert alert-info border-0 shadow-sm mb-4" style="border-radius: 12px;">
                             <h6 class="alert-heading">
-                                <i class="fas fa-info-circle me-2"></i>
-                                Nasıl Çalışır?
+                                <i class="fas fa-gears me-2"></i>
+                                Münazara Süreci Nasıl İşler?
                             </h6>
-                            <ul class="mb-0">
-                                <li>Konunuzu yazdıktan sonra sistem, münazara konusunu ve tarafları belirleyecek</li>
-                                <li>Size hangi tarafı savunacağınız söylenecek, AI karşıt tarafı savunacak</li>
-                                <li>3'er mesajlık karşılıklı münazara yapacaksınız</li>
-                                <li>Sonunda objektif bir değerlendirme alacaksınız</li>
-                            </ul>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="mb-0">
+                                        <li>Konunuzu yazdıktan sonra sistem münazara taraflarını belirler</li>
+                                        <li>Size hangi tarafı savunacağınız söylenir</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="mb-0">
+                                        <li>AI karşıt tarafı savunarak 3'er mesajlık münazara yapar</li>
+                                        <li>Sonunda objektif bir performans değerlendirmesi alırsınız</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary-custom btn-lg">
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg py-3" style="border-radius: 12px; background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%); border: none;">
                                 <i class="fas fa-play me-2"></i>
                                 Münazara Konusunu Analiz Et
                             </button>
+                            <small class="text-center text-muted mt-2">
+                                <i class="fas fa-clock me-1"></i>
+                                Konu analizi yaklaşık 5-10 saniye sürecek
+                            </small>
                         </div>
                     </form>
-
-                    @if (!ViewData.ModelState.IsValid)
-                    {
-                        <div class="alert alert-danger mt-3">
-                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                            {
-                                <div>@error.ErrorMessage</div>
-                            }
-                        </div>
-                    }
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="row mt-5">
-        <div class="col-12">
-            <div class="card border-0" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
-                <div class="card-body p-4">
-                    <h4 class="text-center mb-4">
-                        <i class="fas fa-tips me-2"></i>
-                        Münazara İpuçları
-                    </h4>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6><i class="fas fa-check-circle text-success me-2"></i>Güçlü Argümanlar İçin:</h6>
-                            <ul>
-                                <li>Somut örnekler ve veriler kullanın</li>
-                                <li>Karşıt görüşleri de dikkate alın</li>
-                                <li>Mantıklı bağlantılar kurun</li>
-                                <li>Güvenilir kaynaklara referans verin</li>
-                            </ul>
+            <!-- Münazara Rehberi -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card bg-light border-0" style="border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <h5 class="text-center mb-4">
+                                <i class="fas fa-compass me-2"></i>
+                                Başarılı Münazara Rehberi
+                            </h5>
+                            <div class="row text-center">
+                                <div class="col-md-3">
+                                    <div class="step-item mb-3">
+                                        <div class="step-number">1</div>
+                                        <h6>Araştır</h6>
+                                        <p class="small text-muted">
+                                            Konuyu derinlemesine araştırın ve güçlü argümanlar hazırlayın
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="step-item mb-3">
+                                        <div class="step-number">2</div>
+                                        <h6>Dinle</h6>
+                                        <p class="small text-muted">
+                                            Karşı tarafın argümanlarını dikkatle dinleyin ve analiz edin
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="step-item mb-3">
+                                        <div class="step-number">3</div>
+                                        <h6>Cevapla</h6>
+                                        <p class="small text-muted">
+                                            Somut örnekler ve verilerle güçlü karşı argümanlar sunun
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="step-item mb-3">
+                                        <div class="step-number">4</div>
+                                        <h6>Geliş</h6>
+                                        <p class="small text-muted">
+                                            Geri bildirimlerle münazara becerilerinizi sürekli geliştirin
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <h6><i class="fas fa-exclamation-triangle text-warning me-2"></i>Kaçınılması Gerekenler:</h6>
-                            <ul>
-                                <li>Kişisel saldırılar</li>
-                                <li>Duygusal tepkiler</li>
-                                <li>Konudan sapma</li>
-                                <li>Kanıtsız iddialar</li>
-                            </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Münazara İpuçları -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card border-0" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <h5 class="text-center mb-4">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                Profesyonel Münazara İpuçları
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="tip-section mb-3">
+                                        <h6 class="fw-bold text-success">
+                                            <i class="fas fa-check-circle me-2"></i>
+                                            Güçlü Argümanlar İçin:
+                                        </h6>
+                                        <ul class="mb-0">
+                                            <li>Somut örnekler ve veriler kullanın</li>
+                                            <li>Karşıt görüşleri de dikkate alın</li>
+                                            <li>Mantıklı bağlantılar kurun</li>
+                                            <li>Güvenilir kaynaklara referans verin</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="tip-section mb-3">
+                                        <h6 class="fw-bold text-warning">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            Kaçınılması Gerekenler:
+                                        </h6>
+                                        <ul class="mb-0">
+                                            <li>Kişisel saldırılar</li>
+                                            <li>Duygusal tepkiler</li>
+                                            <li>Konudan sapma</li>
+                                            <li>Kanıtsız iddialar</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Popüler Münazara Konuları -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card shadow-sm border-0" style="border-radius: 15px;">
+                        <div class="card-header text-center py-3" style="background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%); color: white; border-radius: 15px 15px 0 0;">
+                            <h5 class="mb-0">
+                                <i class="fas fa-fire me-2"></i>
+                                Popüler Münazara Konuları
+                            </h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-md-4 text-center">
+                                    <div class="popular-topic mb-3">
+                                        <i class="fas fa-globe fa-2x text-primary mb-2"></i>
+                                        <h6 class="fw-bold">Teknoloji & Toplum</h6>
+                                        <ul class="list-unstyled small text-muted">
+                                            <li>• Sosyal medya etkisi</li>
+                                            <li>• Yapay zeka ve istihdam</li>
+                                            <li>• Dijital bağımlılık</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="popular-topic mb-3">
+                                        <i class="fas fa-graduation-cap fa-2x text-success mb-2"></i>
+                                        <h6 class="fw-bold">Eğitim & Öğrenme</h6>
+                                        <ul class="list-unstyled small text-muted">
+                                            <li>• Online vs Yüz yüze eğitim</li>
+                                            <li>• Standardize testler</li>
+                                            <li>• Özel vs Devlet okulu</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <div class="popular-topic mb-3">
+                                        <i class="fas fa-leaf fa-2x text-success mb-2"></i>
+                                        <h6 class="fw-bold">Çevre & Gelecek</h6>
+                                        <ul class="list-unstyled small text-muted">
+                                            <li>• Yenilenebilir enerji</li>
+                                            <li>• Küresel ısınma</li>
+                                            <li>• Sürdürülebilir yaşam</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -101,6 +284,128 @@
         </div>
     </div>
 </div>
+
+<style>
+    .text-orange {
+        color: #ff6b35 !important;
+    }
+    .feature-card {
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        border: 1px solid #e9ecef;
+    }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+    .form-control, .form-select {
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #f7931e;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+    .step-item {
+        position: relative;
+    }
+
+    .step-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%);
+        color: white;
+        border-radius: 50%;
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-bottom: 15px;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .card {
+        border-radius: 20px;
+    }
+
+    .popular-topic {
+        padding: 15px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+        .popular-topic:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-5px);
+        }
+
+    .tip-section {
+        padding: 15px;
+        background-color: rgba(255,255,255,0.3);
+        border-radius: 10px;
+    }
+
+    .btn-primary-custom {
+        background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%);
+        border: none;
+        color: white;
+        border-radius: 12px;
+    }
+
+        .btn-primary-custom:hover {
+            background: linear-gradient(135deg, #ffcc02 0%, #ffc300 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+    body {
+        background-color: #F7E6DF !important;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form validation
+        const form = document.querySelector('form');
+        const topicInput = document.querySelector('textarea[name="Konu"]');
+
+        form.addEventListener('submit', function(e) {
+            if (topicInput.value.trim().length < 10) {
+                e.preventDefault();
+                alert('Lütfen en az 10 karakter uzunluğunda bir münazara konusu girin.');
+                topicInput.focus();
+            }
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Auto-resize textarea
+        const textarea = document.querySelector('textarea');
+        if (textarea) {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+        }
+    });
+</script>
 
 @section Scripts {
     @{

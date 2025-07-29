@@ -3,11 +3,11 @@
     ViewData["Title"] = "Öğrenme Özeti";
 }
 
-<div class="container">
+<div class="container mt-4">
     <div class="row justify-content-center">
-        <div class="col-md-10">
+        <div class="col-lg-10 col-xl-9">
             <div class="card shadow-lg border-0" style="border-radius: 20px;">
-                <div class="card-header text-center" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border-radius: 20px 20px 0 0;">
+                <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border-radius: 20px 20px 0 0;">
                     <h2 class="mb-0">
                         <i class="fas fa-chart-bar me-3"></i>
                         Öğrenme Süreci Tamamlandı!
@@ -16,94 +16,97 @@
                 <div class="card-body p-5">
                     <div class="text-center mb-5">
                         <i class="fas fa-graduation-cap fa-4x text-success mb-3"></i>
-                        <h3 class="text-success">@Model.Konu</h3>
-                        <p class="lead text-muted">Sokratik yöntem ile öğrenme süreciniz başarıyla tamamlandı!</p>
+                        <h3 class="text-success mb-2">@Model.Konu</h3>
+                        <p class="lead text-muted mb-0">Sokratik yöntem ile öğrenme süreciniz başarıyla tamamlandı!</p>
                     </div>
 
                     <!-- İstatistikler -->
-                    <div class="row mb-5">
+                    <div class="row mb-5 g-4">
                         <div class="col-md-4">
-                            <div class="card text-center h-100" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border: none;">
-                                <div class="card-body">
-                                    <i class="fas fa-question-circle fa-2x text-primary mb-3"></i>
-                                    <h3 class="text-primary">@Model.QAHistory.Count</h3>
-                                    <p class="mb-0">Soru Yanıtlandı</p>
+                            <div class="card text-center h-100 border-0 shadow-sm" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border-radius: 15px;">
+                                <div class="card-body p-4">
+                                    <i class="fas fa-question-circle fa-3x text-primary mb-3"></i>
+                                    <h3 class="text-primary mb-2">@Model.QAHistory.Count</h3>
+                                    <p class="mb-0 fw-bold">Soru Yanıtlandı</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="card text-center h-100" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border: none;">
-                                <div class="card-body">
-                                    <i class="fas fa-clock fa-2x text-warning mb-3"></i>
-                                    <h3 class="text-warning">@((DateTime.Now - Model.CreatedAt).Minutes)</h3>
-                                    <p class="mb-0">Dakika Sürdü</p>
+                            <div class="card text-center h-100 border-0 shadow-sm" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-radius: 15px;">
+                                <div class="card-body p-4">
+                                    <i class="fas fa-clock fa-3x text-warning mb-3"></i>
+                                    <h3 class="text-warning mb-2">@((DateTime.Now - Model.CreatedAt).Minutes)</h3>
+                                    <p class="mb-0 fw-bold">Dakika Sürdü</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="card text-center h-100" style="background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%); border: none;">
-                                <div class="card-body">
-                                    <i class="fas fa-brain fa-2x text-info mb-3"></i>
-                                    <h3 class="text-info">100%</h3>
-                                    <p class="mb-0">Tamamlanma</p>
+                            <div class="card text-center h-100 border-0 shadow-sm" style="background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%); border-radius: 15px;">
+                                <div class="card-body p-4">
+                                    <i class="fas fa-brain fa-3x text-info mb-3"></i>
+                                    <h3 class="text-info mb-2">100%</h3>
+                                    <p class="mb-0 fw-bold">Tamamlanma</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Soru-Cevap Geçmişi -->
-                    <div class="card border-info mb-4">
-                        <div class="card-header bg-info text-white">
+                    <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
+                        <div class="card-header py-3" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; border-radius: 15px 15px 0 0;">
                             <h5 class="mb-0">
                                 <i class="fas fa-history me-2"></i>
                                 Öğrenme Süreci Geçmişi
                             </h5>
                         </div>
-                        <div class="card-body">
-                            <div class="chat-container" style="max-height: 400px;">
+                        <div class="card-body p-0">
+                            <div class="chat-container" style="max-height: 500px; overflow-y: auto; padding: 20px;">
                                 @if (Model.QAHistory.Any())
                                 {
                                     @for (int i = 0; i < Model.QAHistory.Count; i++)
                                     {
                                         var qa = Model.QAHistory[i];
 
-                                        <!-- Soru -->
-                                        <div class="mb-3">
+                                        <div class="qa-item mb-4">
                                             <div class="d-flex align-items-start">
-                                                <div class="me-3">
-                                                    <span class="badge bg-info rounded-circle" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                                                <div class="me-3 flex-shrink-0">
+                                                    <span class="badge bg-info rounded-circle d-flex align-items-center justify-content-center"
+                                                          style="width: 35px; height: 35px; font-size: 14px; font-weight: bold;">
                                                         @(i + 1)
                                                     </span>
                                                 </div>
-                                                <div class="flex-grow-1">
-                                                    <div class="alert alert-light border-start border-info border-4">
+                                                <div class="flex-grow-1" style="min-width: 0;">
+                                                    <!-- Soru -->
+                                                    <div class="alert alert-light border-start border-info border-4 mb-3" style="border-radius: 12px;">
                                                         <div class="d-flex align-items-start">
-                                                            <i class="fas fa-chalkboard-teacher text-info me-2 mt-1"></i>
-                                                            <div>
+                                                            <i class="fas fa-chalkboard-teacher text-info me-2 mt-1 flex-shrink-0"></i>
+                                                            <div style="min-width: 0;">
                                                                 <strong class="text-info">Öğretmen:</strong>
-                                                                <div class="mt-1">@qa.Question</div>
+                                                                <div class="mt-2 text-wrap">@qa.Question</div>
                                                             </div>
                                                         </div>
                                                     </div>
 
-                                                    <div class="alert alert-primary border-start border-primary border-4 mb-2">
+                                                    <!-- Cevap -->
+                                                    <div class="alert alert-primary border-start border-primary border-4 mb-3" style="border-radius: 12px;">
                                                         <div class="d-flex align-items-start">
-                                                            <i class="fas fa-user-graduate text-primary me-2 mt-1"></i>
-                                                            <div>
+                                                            <i class="fas fa-user-graduate text-primary me-2 mt-1 flex-shrink-0"></i>
+                                                            <div style="min-width: 0;">
                                                                 <strong class="text-primary">Sizin Cevabınız:</strong>
-                                                                <div class="mt-1">@qa.Answer</div>
+                                                                <div class="mt-2 text-wrap">@qa.Answer</div>
                                                             </div>
                                                         </div>
                                                     </div>
 
+                                                    <!-- Geri Bildirim -->
                                                     @if (!string.IsNullOrEmpty(qa.TeacherFeedback))
                                                     {
-                                                        <div class="alert alert-success border-start border-success border-4">
+                                                        <div class="alert alert-success border-start border-success border-4 mb-3" style="border-radius: 12px;">
                                                             <div class="d-flex align-items-start">
-                                                                <i class="fas fa-comment text-success me-2 mt-1"></i>
-                                                                <div>
+                                                                <i class="fas fa-comment text-success me-2 mt-1 flex-shrink-0"></i>
+                                                                <div style="min-width: 0;">
                                                                     <strong class="text-success">Geri Bildirim:</strong>
-                                                                    <div class="mt-1">@qa.TeacherFeedback</div>
+                                                                    <div class="mt-2 text-wrap">@qa.TeacherFeedback</div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -115,9 +118,9 @@
                                 }
                                 else
                                 {
-                                    <div class="text-center text-muted p-4">
-                                        <i class="fas fa-info-circle fa-2x mb-3"></i>
-                                        <p>Öğrenme geçmişi bulunamadı.</p>
+                                    <div class="text-center text-muted p-5">
+                                        <i class="fas fa-info-circle fa-3x mb-3"></i>
+                                        <p class="mb-0">Öğrenme geçmişi bulunamadı.</p>
                                     </div>
                                 }
                             </div>
@@ -125,44 +128,52 @@
                     </div>
 
                     <!-- Başarı Mesajı -->
-                    <div class="alert alert-success border-0" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
-                        <div class="text-center">
+                    <div class="alert border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border-radius: 15px;">
+                        <div class="text-center py-3">
                             <h4 class="alert-heading">
-                                <i class="fas fa-trophy me-2"></i>
+                                <i class="fas fa-trophy me-2 text-warning"></i>
                                 Tebrikler!
                             </h4>
-                            <p class="mb-0">
+                            <p class="mb-0 lead">
                                 <strong>@Model.Konu</strong> konusunu Sokratik yöntemle başarıyla öğrendiniz.
-                                Bu süreçte @Model.QAHistory.Count soru yanıtladınız ve konuyu derinlemesine kavradınız.
+                                Bu süreçte <strong>@Model.QAHistory.Count soru</strong> yanıtladınız ve konuyu derinlemesine kavradınız.
                             </p>
                         </div>
                     </div>
 
                     <!-- Öğrenme İpuçları -->
-                    <div class="card border-warning mb-4">
-                        <div class="card-header bg-warning text-dark">
+                    <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
+                        <div class="card-header py-3" style="background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%); color: white; border-radius: 15px 15px 0 0;">
                             <h5 class="mb-0">
                                 <i class="fas fa-lightbulb me-2"></i>
                                 Öğrenmeyi Pekiştirmek İçin
                             </h5>
                         </div>
-                        <div class="card-body">
-                            <div class="row">
+                        <div class="card-body p-4">
+                            <div class="row g-4">
                                 <div class="col-md-6">
-                                    <h6><i class="fas fa-repeat text-primary me-2"></i>Tekrar:</h6>
-                                    <ul>
-                                        <li>Birkaç gün sonra konuyu tekrar gözden geçirin</li>
-                                        <li>Öğrendiklerinizi başkalarına anlatmaya çalışın</li>
-                                        <li>Benzer konularda yeni sorular oluşturun</li>
-                                    </ul>
+                                    <div class="tip-section h-100">
+                                        <h6 class="fw-bold text-primary mb-3">
+                                            <i class="fas fa-repeat me-2"></i>Tekrar:
+                                        </h6>
+                                        <ul class="list-unstyled">
+                                            <li class="mb-2">✓ Birkaç gün sonra konuyu tekrar gözden geçirin</li>
+                                            <li class="mb-2">✓ Öğrendiklerinizi başkalarına anlatmaya çalışın</li>
+                                            <li class="mb-0">✓ Benzer konularda yeni sorular oluşturun</li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <h6><i class="fas fa-book text-success me-2"></i>Araştırma:</h6>
-                                    <ul>
-                                        <li>Konuyla ilgili ek kaynaklar araştırın</li>
-                                        <li>Farklı bakış açılarını keşfedin</li>
-                                        <li>Pratik uygulamalar yapın</li>
-                                    </ul>
+                                    <div class="tip-section h-100">
+                                        <h6 class="fw-bold text-success mb-3">
+                                            <i class="fas fa-book me-2"></i>Araştırma:
+                                        </h6>
+                                        <ul class="list-unstyled">
+                                            <li class="mb-2">✓ Konuyla ilgili ek kaynaklar araştırın</li>
+                                            <li class="mb-2">✓ Farklı bakış açılarını keşfedin</li>
+                                            <li class="mb-0">✓ Pratik uygulamalar yapın</li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -170,21 +181,92 @@
 
                     <!-- Aksiyon Butonları -->
                     <div class="text-center">
-                        <a href="@Url.Action("NewSession")" class="btn btn-success btn-lg me-3">
-                            <i class="fas fa-plus me-2"></i>
-                            Yeni Konu Öğren
-                        </a>
-                        <a href="@Url.Action("Index", "Munazara")" class="btn btn-primary btn-lg me-3">
-                            <i class="fas fa-comments me-2"></i>
-                            Münazara Dene
-                        </a>
-                        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary btn-lg">
-                            <i class="fas fa-home me-2"></i>
-                            Ana Sayfa
-                        </a>
+                        <div class="d-flex flex-wrap justify-content-center gap-3">
+                            <a href="@Url.Action("NewSession")" class="btn btn-success btn-lg px-4 py-3" style="border-radius: 12px;">
+                                <i class="fas fa-plus me-2"></i>
+                                Yeni Konu Öğren
+                            </a>
+                            <a href="@Url.Action("Index", "Munazara")" class="btn btn-primary btn-lg px-4 py-3" style="border-radius: 12px;">
+                                <i class="fas fa-comments me-2"></i>
+                                Münazara Dene
+                            </a>
+                            <a href="@Url.Action("Index", "Home")" class="btn btn-secondary btn-lg px-4 py-3" style="border-radius: 12px;">
+                                <i class="fas fa-home me-2"></i>
+                                Ana Sayfa
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .chat-container {
+        background: #f8f9fa;
+        border-radius: 0 0 15px 15px;
+    }
+
+    .qa-item {
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 20px;
+    }
+
+        .qa-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+    .tip-section {
+        background: rgba(255,255,255,0.3);
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+    }
+
+    .alert {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .text-wrap {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        white-space: pre-wrap;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .d-flex.gap-3
+
+    {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-lg {
+        min-width: 200px;
+    }
+
+    .chat-container {
+        max-height: 400px;
+    }
+
+    }
+
+    @@media (max-width: 576px) {
+        .card-body
+
+    {
+        padding: 20px !important;
+    }
+
+    }
+</style>

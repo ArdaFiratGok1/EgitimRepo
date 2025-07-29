@@ -1,89 +1,170 @@
 ﻿@model EgitimMaskotuApp.Models.MunazaraChatViewModel
 
 @{
-    ViewData["Title"] = "Münazara Tamamlandı";
+    ViewData["Title"] = "Münazara Tamamlandı - " + Model.Session.Konu;
 }
 
-<div class="container mt-4">
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow">
-                <div class="card-header bg-success text-white text-center">
-                    <h3><i class="fas fa-check-circle"></i> Münazara Tamamlandı!</h3>
+        <div class="col-lg-10 col-xl-8">
+            <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: white; border-radius: 20px 20px 0 0;">
+                    <h2 class="mb-0">
+                        <i class="fas fa-flag-checkered me-3"></i>
+                        Münazara Tamamlandı!
+                    </h2>
+                    <p class="mb-0 mt-2 opacity-90">Tebrikler! Münazaranızı başarıyla tamamladınız</p>
                 </div>
-                <div class="card-body">
-                    <div class="text-center mb-4">
-                        <h4>🎉 Tebrikler! Münazaranız başarıyla tamamlandı.</h4>
-                        <p class="text-muted">
-                            <strong>Konu:</strong> @Model.Session.Konu<br>
-                            <strong>Sizin Tarafınız:</strong> @Model.Session.KullaniciTarafi<br>
-                            <strong>AI'ın Tarafı:</strong> @Model.Session.AiTarafi
+
+                <div class="card-body p-5">
+                    <!-- Tebrik Mesajı -->
+                    <div class="text-center mb-5">
+                        <div class="celebration-icon mb-4">
+                            <i class="fas fa-trophy fa-4x text-warning"></i>
+                        </div>
+                        <h3 class="fw-bold text-dark mb-3">🎉 Harika Bir Performans!</h3>
+                        <p class="lead text-muted">
+                            Münazaranız başarıyla tamamlandı. Argümantasyon becerilerinizi test ettiniz!
                         </p>
                     </div>
 
-                    <!-- Münazara Özeti -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5><i class="fas fa-comments"></i> Münazara Özeti</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4 text-center">
-                                    <div class="stat-box">
-                                        <h3 class="text-primary">@Model.Session.Messages.Count</h3>
-                                        <p class="mb-0">Toplam Mesaj</p>
+                    <!-- Münazara Detayları -->
+                    <div class="row mb-5">
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-radius: 15px;">
+                                <div class="card-body p-4">
+                                    <h5 class="text-center mb-3 text-warning">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Münazara Bilgileri
+                                    </h5>
+                                    <div class="row text-center">
+                                        <div class="col-12 mb-3">
+                                            <strong class="text-dark">Konu:</strong>
+                                            <div class="mt-1 fs-5 fw-semibold text-primary">@Model.Session.Konu</div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-4 text-center">
-                                    <div class="stat-box">
-                                        <h3 class="text-success">@(Model.Session.Messages.Count(m => m.Speaker == "user"))</h3>
-                                        <p class="mb-0">Sizin Mesajlarınız</p>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 text-center">
-                                    <div class="stat-box">
-                                        <h3 class="text-info">@((DateTime.Now - Model.Session.CreatedAt).Minutes)</h3>
-                                        <p class="mb-0">Süre (dakika)</p>
+                                    <div class="row text-center">
+                                        <div class="col-md-6 mb-2">
+                                            <strong class="text-dark">Sizin Tarafınız:</strong>
+                                            <div class="mt-1 text-primary fw-semibold">@Model.Session.KullaniciTarafi</div>
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <strong class="text-dark">AI'ın Tarafı:</strong>
+                                            <div class="mt-1 text-warning fw-semibold">@Model.Session.AiTarafi</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- İstatistikler -->
+                    <div class="row mb-5">
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-card text-center p-4" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 15px;">
+                                <i class="fas fa-comments fa-2x text-primary mb-3"></i>
+                                <h3 class="fw-bold text-primary mb-1">@Model.Session.Messages.Count</h3>
+                                <p class="mb-0 text-muted">Toplam Mesaj</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-card text-center p-4" style="background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%); border-radius: 15px;">
+                                <i class="fas fa-user fa-2x text-success mb-3"></i>
+                                <h3 class="fw-bold text-success mb-1">@(Model.Session.Messages.Count(m => m.Speaker == "user"))</h3>
+                                <p class="mb-0 text-muted">Sizin Mesajlarınız</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-card text-center p-4" style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-radius: 15px;">
+                                <i class="fas fa-clock fa-2x text-warning mb-3"></i>
+                                <h3 class="fw-bold text-warning mb-1">@((DateTime.Now - Model.Session.CreatedAt).Minutes)</h3>
+                                <p class="mb-0 text-muted">Süre (dakika)</p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Son Mesajlar Özeti -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h6><i class="fas fa-history"></i> Son Mesajlar</h6>
+                    <div class="card border-0 shadow-sm mb-5" style="border-radius: 15px;">
+                        <div class="card-header bg-light border-0" style="border-radius: 15px 15px 0 0;">
+                            <h6 class="mb-0 fw-bold">
+                                <i class="fas fa-history me-2 text-warning"></i>
+                                Son Mesajlar Özeti
+                            </h6>
                         </div>
                         <div class="card-body" style="max-height: 300px; overflow-y: auto;">
-                            @foreach (var message in Model.Session.Messages.TakeLast(4))
+                            @if (Model.Session.Messages.Any())
                             {
-                                <div class="message-summary mb-2 p-2 rounded @(message.Speaker == "user" ? "bg-light border-left border-primary" : "bg-light border-left border-info")">
-                                    <small class="text-muted">
-                                        <strong>@(message.Speaker == "user" ? "Siz" : "AI"):</strong>
-                                    </small>
-                                    <p class="mb-0 mt-1">@message.Content</p>
+                                @foreach (var message in Model.Session.Messages.TakeLast(4))
+                                {
+                                    <div class="message-summary mb-3 p-3 rounded-3 @(message.Speaker == "user" ? "user-summary" : "ai-summary")">
+                                        <div class="d-flex align-items-start">
+                                            <div class="me-3 flex-shrink-0">
+                                                @if (message.Speaker == "user")
+                                                {
+                                                    <div class="summary-avatar bg-primary">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="summary-avatar bg-warning">
+                                                        <i class="fas fa-robot"></i>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="flex-grow-1" style="min-width: 0;">
+                                                <div class="fw-bold mb-1 @(message.Speaker == "user" ? "text-primary" : "text-warning")">
+                                                    @(message.Speaker == "user" ? "Siz" : "AI Maskot")
+                                                </div>
+                                                <p class="mb-0 text-dark">@message.Content</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-center text-muted py-4">
+                                    <i class="fas fa-comments fa-2x mb-2"></i>
+                                    <p class="mb-0">Henüz mesaj bulunmuyor.</p>
                                 </div>
                             }
                         </div>
                     </div>
 
+                    <!-- Sonraki Adımlar -->
+                    <div class="alert alert-success border-0 shadow-sm mb-5" style="border-radius: 15px; background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);">
+                        <div class="text-center">
+                            <h6 class="alert-heading fw-bold">
+                                <i class="fas fa-arrow-right me-2"></i>
+                                Sırada Ne Var?
+                            </h6>
+                            <p class="mb-0">
+                                Münazara performansınızın detaylı analizi hazırlanıyor.
+                                Sonuç sayfasında puanınızı, güçlü yanlarınızı ve gelişim alanlarınızı görebileceksiniz.
+                            </p>
+                        </div>
+                    </div>
+
                     <!-- Aksiyon Butonları -->
                     <div class="text-center">
-                        <form method="post" action="@Url.Action("GoToResult")" class="d-inline">
-                            <button type="submit" class="btn btn-primary btn-lg me-3">
-                                <i class="fas fa-chart-bar"></i> Sonuçları Gör
+                        <form method="post" action="@Url.Action("GoToResult")" class="d-inline me-3">
+                            <button type="submit" class="btn btn-warning btn-lg px-5 py-3 text-dark fw-bold" style="border-radius: 12px;">
+                                <i class="fas fa-chart-bar me-2"></i>
+                                Sonuçları Gör
                             </button>
                         </form>
 
-                        <a href="@Url.Action("NewMunazara")" class="btn btn-success btn-lg">
-                            <i class="fas fa-plus"></i> Yeni Münazara
+                        <a href="@Url.Action("NewMunazara")" class="btn btn-outline-warning btn-lg px-4 py-3" style="border-radius: 12px;">
+                            <i class="fas fa-plus me-2"></i>
+                            Yeni Münazara
                         </a>
                     </div>
 
                     <div class="text-center mt-3">
                         <small class="text-muted">
-                            Sonuç sayfasında performansınızın detaylı analizi ve puanlaması bulunmaktadır.
+                            <i class="fas fa-info-circle me-1"></i>
+                            Sonuç sayfasında performansınızın detaylı analizi ve puanlaması bulunmaktadır
                         </small>
                     </div>
                 </div>
@@ -93,28 +174,141 @@
 </div>
 
 <style>
-    .stat-box {
-        padding: 20px;
-        background: #f8f9fa;
-        border-radius: 10px;
-        margin: 10px 0;
+    .celebration-icon {
+        animation: bounce 2s infinite;
     }
 
-        .stat-box h3 {
-            margin-bottom: 5px;
-            font-weight: bold;
+    @@keyframes bounce {
+        0%, 20%, 50%, 80%, 100%
+
+    {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-10px);
+    }
+
+    60% {
+        transform: translateY(-5px);
+    }
+
+    }
+
+    .stat-card {
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
     .message-summary {
-        border-left-width: 4px !important;
+        transition: all 0.3s ease;
+        border: 1px solid #e9ecef;
     }
 
-    .border-left {
-        border-left-style: solid !important;
+    .user-summary {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        border-left: 4px solid #2196f3 !important;
+    }
+
+    .ai-summary {
+        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+        border-left: 4px solid #ff9800 !important;
+    }
+
+    .summary-avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 14px;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .btn-warning:hover {
+        background-color: #ff6b35;
+        border-color: #ff6b35;
+        color: white;
+    }
+
+    .btn-outline-warning:hover {
+        background-color: #ff6b35;
+        border-color: #ff6b35;
+        color: white;
+    }
+
+    /* Scrollbar styling */
+    .card-body::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .card-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .card-body::-webkit-scrollbar-thumb {
+        background: #ff6b35;
+        border-radius: 10px;
+    }
+
+        .card-body::-webkit-scrollbar-thumb:hover {
+            background: #e55a2b;
+        }
+
+    @@media (max-width: 768px) {
+        .card-body
+
+    {
+        padding: 2rem !important;
     }
 
     .btn-lg {
-        padding: 12px 30px;
-        font-size: 1.1rem;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
     }
 </style>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth animations
+            const cards = document.querySelectorAll('.stat-card, .message-summary');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Form submission loading
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    const button = this.querySelector('button[type="submit"]');
+                    if (button) {
+                        button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sonuçlar Hazırlanıyor...';
+                        button.disabled = true;
+                    }
+                });
+            }
+        });
+    </script>
+}

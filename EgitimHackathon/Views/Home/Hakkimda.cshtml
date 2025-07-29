@@ -1,0 +1,133 @@
+﻿@{
+    ViewData["Title"] = "Geliştirici Hakkında";
+}
+
+@section Styles {
+    <style>
+        .about-header {
+            padding: 4rem 0;
+            background-color: var(--background-color);
+            text-align: center;
+        }
+
+        .profile-sidebar .card {
+            border: none;
+            border-radius: var(--border-radius-md);
+            box-shadow: 0 4px 25px rgba(0,0,0,0.07);
+        }
+
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10%;
+            border: 5px solid white;
+            margin-top: -75px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .social-links a {
+            color: #adb5bd;
+            margin: 0 0.75rem;
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+            .social-links a:hover {
+                color: var(--primary-color);
+            }
+
+        .tech-logo {
+            height: 40px;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            margin: 1rem;
+        }
+
+            .tech-logo:hover {
+                opacity: 1;
+            }
+
+        .social-links a[title="GitHub"] i {
+            color: #333;
+        }
+
+        .social-links a[title="LinkedIn"] i {
+            color: #0077b5;
+        }
+
+        .social-links a[title="Instagram"] i {
+            color: #e1306c;
+        }
+        .body{
+            background: #fffaf2
+        }
+    </style>
+}
+
+<div class="about-header">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Hakkımda</h1>
+    </div>
+</div>
+
+<div class="container mt-n5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card p-4 p-md-5" style="border-radius: var(--border-radius-lg); border:none;">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h3 class="fw-bold mb-4">Projenin Hikayesi</h3>
+                        <p class="text-muted">
+                            Eğitim Maskotu fikri, standart "herkese aynı" eğitim modelinin bazen ne kadar motivasyon kırıcı olabildiğini fark etmemle doğdu. Teknolojinin, özellikle de yapay zekanın, her bireyin kendi hızında ve kendi ilgi alanlarına göre öğrenebileceği kişisel bir rehber oluşturabileceğine inandım. Bu platform, pasif bir şekilde bilgi tüketmek yerine, bilginin aktif olarak sorgulandığı, test edildiği ve hatta savunulduğu dinamik bir ortam sunma hayalimin bir ürünüdür.
+                        </p>
+                        <p class="text-muted">
+                            Amacım, öğrenmeyi daha etkileşimli, daha kişisel ve en önemlisi daha keyifli hale getirecek bir "yol arkadaşı" yaratmaktı. Umarım bu yolculukta size de faydalı olur!
+                        </p>
+
+                        <hr class="my-5">
+
+                        <h3 class="fw-bold mb-4">Kullandığım Teknolojiler</h3>
+                        <div class="text-center">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7d/Microsoft_.NET_logo.svg" alt=".NET Logo" class="tech-logo" title=".NET 8">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/bd/Logo_C_sharp.svg" alt="C# Logo" class="tech-logo" title="C#">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg" alt="HTML5 Logo" class="tech-logo" title="HTML5">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg" alt="CSS3 Logo" class="tech-logo" title="CSS3">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png" alt="JavaScript Logo" class="tech-logo" title="JavaScript">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b2/Bootstrap_logo.svg" alt="Bootstrap Logo" class="tech-logo" title="Bootstrap 5">
+                            <img src="https://i.hizliresim.com/c1eqhmw.jpg" alt="Gemini AI Logo" class="tech-logo" title="Google Gemini">
+                            <img src="https://i.hizliresim.com/6obl6g6.jpg" alt="YouTube API Logo" class="tech-logo" title="YouTube Data API v3">
+                            <img src="https://i.hizliresim.com/fsfj7d8.jpg" alt="CORE API Logo" class="tech-logo" title="CORE API">
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="profile-sidebar sticky-top" style="top: 2rem;">
+                            <div class="card text-center p-3">
+                                <img src="https://i.hizliresim.com/806q7pf.jpg" alt="Arda Fırat" class="profile-pic mx-auto">
+                                <div class="card-body">
+                                    <h5 class="fw-bold mt-2">Arda Fırat Gök</h5>
+                                    <div class="social-links mt-3 mb-4">
+                                        <a href="https://github.com/ArdaFiratGok1" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+                                        <a href="https://www.linkedin.com/in/arda-fırat-gök-06367928a" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                                        <a href="https://www.instagram.com/ardavegok" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center my-5 py-5">
+    <h3 class="fw-bold">Bu Yolculuğa Katılın!</h3>
+    <p class="lead text-muted mb-4">Siz de kendi öğrenme yol haritanızı oluşturarak potansiyelinizi keşfedin.</p>
+    <a href="@Url.Action("Index", "AIAgent")" class="btn btn-outline-secondary btn-lg rounded-pill">
+        <i class="fas fa-rocket me-2"></i>
+        Hemen Başla
+    </a>
+</div>

@@ -3,62 +3,74 @@
     ViewData["Title"] = "Münazara Onayı";
 }
 
-<div class="container">
+<div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card shadow-lg border-0" style="border-radius: 20px;">
-                <div class="card-header text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0;">
+                <!-- Header -->
+                <div class="card-header text-center py-4"
+                     style="background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%);
+                            color: white;
+                            border-radius: 20px 20px 0 0;">
                     <h2 class="mb-0">
                         <i class="fas fa-check-circle me-3"></i>
                         Münazara Konusu Hazır!
                     </h2>
                 </div>
+
                 <div class="card-body p-5">
+                    <!-- Intro -->
                     <div class="text-center mb-5">
-                        <i class="fas fa-robot fa-4x text-primary mb-3"></i>
-                        <p class="lead">Münazara konunuz analiz edildi. Aşağıdaki düzenlemeyi onaylarsanız münazaraya başlayabiliriz.</p>
+                        <i class="fas fa-robot fa-4x text-orange mb-3"></i>
+                        <p class="lead text-muted">
+                            Münazara konunuz analiz edildi. Aşağıdaki düzenlemeyi onaylarsanız münazaraya başlayabiliriz.
+                        </p>
                     </div>
 
-                    <div class="row">
+                    <!-- Konu Kartı -->
+                    <div class="row mb-4">
                         <div class="col-12">
-                            <div class="card mb-4" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border: none;">
+                            <div class="card mb-4"
+                                 style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+                                        border: none;
+                                        border-radius: 15px;">
                                 <div class="card-body text-center p-4">
                                     <h4 class="mb-3">
-                                        <i class="fas fa-topic me-2"></i>
+                                        <i class="fas fa-lightbulb me-2"></i>
                                         Münazara Konusu
                                     </h4>
-                                    <h3 class="text-primary fw-bold">@Model.Konu</h3>
+                                    <h3 class="fw-bold">@Model.Konu</h3>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card h-100" style="border: 3px solid #007bff; border-radius: 15px;">
+                    <!-- Taraf Kartları -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-0 feature-card"
+                                 style="border: 2px solid #ff6b35; border-radius: 15px;">
                                 <div class="card-body text-center p-4">
-                                    <div class="mb-3">
-                                        <i class="fas fa-user fa-3x text-primary"></i>
-                                    </div>
-                                    <h5 class="card-title text-primary fw-bold">SİZİN TARAFINIZ</h5>
-                                    <p class="card-text fs-5">@Model.KullaniciTarafi</p>
+                                    <i class="fas fa-user fa-3x text-orange mb-3"></i>
+                                    <h5 class="fw-bold text-orange">SİZİN TARAFINIZ</h5>
+                                    <p class="fs-5 text-muted">@Model.KullaniciTarafi</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card h-100" style="border: 3px solid #dc3545; border-radius: 15px;">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 border-0 feature-card"
+                                 style="border: 2px solid #dc3545; border-radius: 15px;">
                                 <div class="card-body text-center p-4">
-                                    <div class="mb-3">
-                                        <i class="fas fa-robot fa-3x text-danger"></i>
-                                    </div>
-                                    <h5 class="card-title text-danger fw-bold">AI'IN TARAFI</h5>
-                                    <p class="card-text fs-5">@Model.AiTarafi</p>
+                                    <i class="fas fa-robot fa-3x text-danger mb-3"></i>
+                                    <h5 class="fw-bold text-danger">AI'IN TARAFI</h5>
+                                    <p class="fs-5 text-muted">@Model.AiTarafi</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="alert alert-warning mt-4" role="alert">
+                    <!-- Kurallar -->
+                    <div class="alert alert-info border-0 shadow-sm mb-4" style="border-radius: 12px;">
                         <h6 class="alert-heading">
                             <i class="fas fa-clock me-2"></i>
                             Münazara Kuralları
@@ -71,14 +83,22 @@
                         </ul>
                     </div>
 
+                    <!-- Butonlar -->
                     <div class="text-center mt-4">
                         <form asp-action="ConfirmStart" method="post" class="d-inline me-3">
-                            <button type="submit" class="btn btn-success btn-lg">
+                            <button type="submit"
+                                    class="btn btn-primary btn-lg py-3"
+                                    style="border-radius: 12px;
+                                           background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%);
+                                           border: none;">
                                 <i class="fas fa-play me-2"></i>
                                 Münazaraya Başla
                             </button>
                         </form>
-                        <a href="@Url.Action("Index")" class="btn btn-secondary btn-lg">
+                        <a href="@Url.Action("Index")"
+                           class="btn btn-secondary btn-lg py-3"
+                           style="border-radius: 12px;
+                                  border: 2px solid #e9ecef;">
                             <i class="fas fa-arrow-left me-2"></i>
                             Geri Dön
                         </a>
@@ -88,3 +108,19 @@
         </div>
     </div>
 </div>
+
+<style>
+    .text-orange {
+        color: #ff6b35 !important;
+    }
+
+    .feature-card {
+        transition: all 0.3s ease;
+        border-radius: 15px;
+    }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+</style>
