@@ -1,7 +1,7 @@
 ﻿@model EgitimMaskotuApp.Models.AIAgentStartViewModel
 
 @{
-    ViewData["Title"] = "AI Agent - Öğrenme Yol Haritası Oluştur";
+    ViewData["Title"] = "Öğrenme Yol Haritası Oluştur";
 }
 
 <div class="container mt-5">
@@ -11,9 +11,9 @@
             <div class="text-center mb-5">
                 <div class="mb-4">
                     <i class="fas fa-robot fa-4x text-primary mb-3"></i>
-                    <h1 class="display-5 fw-bold text-primary">AI Öğrenme Asistanı</h1>
+                    <h1 class="display-5 fw-bold text-primary">Eğitim Maskotu</h1>
                     <p class="lead text-muted">
-                        Yapay zeka ile kişiselleştirilmiş öğrenme yol haritanızı oluşturun
+                        Eğitim Maskotu ile kişiselleştirilmiş öğrenme yol haritanızı oluşturun
                     </p>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                         <i class="fas fa-map-marked-alt fa-3x text-success mb-3"></i>
                         <h5>Kişisel Yol Haritası</h5>
                         <p class="text-muted">
-                            AI size özel, adım adım öğrenme planı hazırlar
+                            Eğitim Maskotu size özel, adım adım öğrenme planı hazırlar
                         </p>
                     </div>
                 </div>
@@ -78,7 +78,7 @@
                         <!-- Konu -->
                         <div class="mb-4">
                             <label for="Topic" class="form-label fw-bold">
-                                <i class="fas fa-lightbulb me-2 text-warning"></i>
+                                
                                 Öğrenmek İstediğiniz Konu *
                             </label>
                             <input type="text" 
@@ -103,22 +103,21 @@
                         <!-- Seviye -->
                         <div class="mb-4">
                             <label for="UserLevel" class="form-label fw-bold">
-                                <i class="fas fa-signal me-2 text-info"></i>
                                 Mevcut Seviyeniz
                             </label>
 
                             <select class="form-select form-select-lg" asp-for="UserLevel" style="border-radius: 12px;">
 
                                 <option value="Başlangıç">
-                                    🌱 Başlangıç - Konuya yeni başlıyorum
+                                     Başlangıç - Konuya yeni başlıyorum
                                 </option>
 
                                 <option value="Orta">
-                                    🌿 Orta - Temel bilgilerim var
+                                     Orta - Temel bilgilerim var
                                 </option>
 
                                 <option value="İleri">
-                                    🌳 İleri - Konuyu iyi biliyorum, derinleşmek istiyorum
+                                     İleri - Konuyu iyi biliyorum, derinleşmek istiyorum
                                 </option>
                             </select>
                         </div>
@@ -133,27 +132,27 @@
                             <select class="form-select form-select-lg" asp-for="LearningGoal" style="border-radius: 12px;">
 
                                 <option value="Genel">
-                                    📚 Genel Kültür - Konuyu genel olarak öğrenmek
+                                     Genel Kültür - Konuyu genel olarak öğrenmek
                                 </option>
 
                                 <option value="Sınav">
-                                    📝 Sınav Hazırlığı - Sınava hazırlanıyorum
+                                     Sınav Hazırlığı - Sınava hazırlanıyorum
                                 </option>
 
                                 <option value="Proje">
-                                    🛠️ Proje Geliştirme - Pratik uygulama yapmak
+                                     Proje Geliştirme - Pratik uygulama yapmak
                                 </option>
 
                                 <option value="Kariyer">
-                                    💼 Kariyer Gelişimi - Mesleğimde kullanacağım
+                                     Kariyer Gelişimi - Mesleğimde kullanacağım
                                 </option>
                             </select>
                         </div>
 
                         <!-- Odak Alanları (Opsiyonel) -->
+                        
                         <div class="mb-4">
                             <label class="form-label fw-bold">
-                                <i class="fas fa-crosshairs me-2 text-warning"></i>
                                 Odaklanmak İstediğiniz Alanlar (Opsiyonel)
                             </label>
                             <div class="row">
@@ -161,19 +160,19 @@
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="checkbox" name="FocusAreas" value="Teori" id="focus1">
                                         <label class="form-check-label" for="focus1">
-                                            📖 Teorik Bilgiler
+                                             Teorik Bilgiler
                                         </label>
                                     </div>
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="checkbox" name="FocusAreas" value="Pratik" id="focus2">
                                         <label class="form-check-label" for="focus2">
-                                            ⚡ Pratik Uygulamalar
+                                             Pratik Uygulamalar
                                         </label>
                                     </div>
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="checkbox" name="FocusAreas" value="Proje" id="focus3">
                                         <label class="form-check-label" for="focus3">
-                                            🚀 Proje Örnekleri
+                                             Proje Örnekleri
                                         </label>
                                     </div>
                                 </div>
@@ -181,30 +180,30 @@
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="checkbox" name="FocusAreas" value="Matematik" id="focus4">
                                         <label class="form-check-label" for="focus4">
-                                            🧮 Matematiksel Altyapı
+                                             Matematiksel Yöntemler
                                         </label>
                                     </div>
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="checkbox" name="FocusAreas" value="Araçlar" id="focus5">
                                         <label class="form-check-label" for="focus5">
-                                            🛠️ Araçlar ve Teknolojiler
+                                             Araçlar ve Teknolojiler
                                         </label>
                                     </div>
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="checkbox" name="FocusAreas" value="Trend" id="focus6">
                                         <label class="form-check-label" for="focus6">
-                                            📈 Güncel Trendler
+                                             Güncel Trendler
                                         </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
+                        
                         <!-- Submit Button -->
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg py-3" style="border-radius: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
                                 <i class="fas fa-magic me-2"></i>
-                                AI ile Yol Haritamı Oluştur
+                                Eğitim Maskotu ile Yol Haritamı Oluştur
                             </button>
                             <small class="text-center text-muted mt-2">
                                 <i class="fas fa-clock me-1"></i>
@@ -215,40 +214,40 @@
                 </div>
             </div>
 
-            <!-- Adım Açıklaması -->
-            <div class="row mt-5">
+            
+                <div class="row mt-5">
                 <div class="col-12">
                     <div class="card bg-light border-0" style="border-radius: 15px;">
                         <div class="card-body p-4">
                             <h5 class="text-center mb-4">
                                 <i class="fas fa-route me-2"></i>
-                                Öğrenme Yolculuğunuz Nasıl Olacak?
+                                Yol Haritanız Nasıl Olacak?
                             </h5>
                             <div class="row text-center">
                                 <div class="col-md-4">
                                     <div class="step-item mb-3">
                                         <div class="step-number">1</div>
-                                        <h6>Öğren</h6>
+                                        <h6>Modül Bazlı Eğitim</h6>
                                         <p class="small text-muted">
-                                            AI destekli açıklamalar, videolar ve makalelerle konuyu derinlemesine öğrenin
+                                            Her modül kendi içerisinde AI destekli açıklamalar, videolar ve makalelerle konuyu derinlemesine öğretir!
                                         </p>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="step-item mb-3">
                                         <div class="step-number">2</div>
-                                        <h6>Test Et</h6>
+                                        <h6>Çoktan Seçmeli Sınav</h6>
                                         <p class="small text-muted">
-                                            Sokratik öğretmen ile öğrendiklerinizi soru-cevap şeklinde pekiştirin
+                                            Modülleri tamamladıktan sonra özel testlerle kendini dene!
                                         </p>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="step-item mb-3">
                                         <div class="step-number">3</div>
-                                        <h6>Savun</h6>
+                                        <h6>İlerleme Takibi</h6>
                                         <p class="small text-muted">
-                                            Münazara modunda AI ile tartışarak konudaki görüşlerinizi güçlendirin
+                                            Yol Haritanızın hangi noktasını olduğunu görmeniz için ilerleme takibine göz atın!
                                         </p>
                                     </div>
                                 </div>
@@ -257,6 +256,10 @@
                     </div>
                 </div>
             </div>
+            
+            
+            
+            
         </div>
     </div>
 </div>

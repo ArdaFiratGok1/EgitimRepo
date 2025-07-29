@@ -37,7 +37,7 @@ else
                                     <div>
                                         <h2 class="mb-2 fw-bold">@Model.Session.MainTopic</h2>
                                         <p class="mb-0 opacity-90">
-                                            <i class="fas fa-user-graduate me-2"></i>
+                                            
                                             Seviye: <span class="fw-semibold">@Model.Session.UserLevel</span>
                                         </p>
                                     </div>
@@ -78,7 +78,7 @@ else
                             </div>
                             <div class="flex-grow-1">
                                 <h6 class="alert-heading mb-2 text-primary fw-bold">
-                                    <i class="fas fa-sparkles me-2"></i>AI Önerisi
+                                    <i class="fas fa-sparkles me-2"></i>Eğitim Maskotu:
                                 </h6>
                                 <p class="mb-0 text-dark">@Model.CurrentRecommendation</p>
                             </div>
@@ -200,7 +200,7 @@ else
                                                                 <h6 class="card-title mb-3 text-dark fw-bold">@node.Title</h6>
 
                                                                 <div class="node-meta mb-3">
-                                                                    <span class="badge bg-outline-secondary">
+                                                                    <span class="badge bg-primary">
                                                                         <i class="fas fa-signal me-1"></i>
                                                                         @node.Difficulty
                                                                     </span>
@@ -277,8 +277,8 @@ else
                 <div class="card shadow-lg border-0 mb-4" style="border-radius: 20px;">
                     <div class="card-header text-white py-3" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); border-radius: 20px 20px 0 0;">
                         <h6 class="mb-0 fw-bold">
-                            <i class="fas fa-rocket me-2"></i>
-                            Şimdi Çalışabilirsiniz
+                            <i class="fas fa-rocket"></i>
+                            Sıradaki Modüller
                         </h6>
                     </div>
                     <div class="card-body p-4">
@@ -338,8 +338,8 @@ else
                                         <a href="@Url.Action("StartQuiz", "AIAgent", new { topic = node.Title })"
                                            class="btn btn-sm btn-outline-primary rounded-pill"
                                            title="Kendini Test Et">
-                                            <i class="fas fa-vial me-1"></i>
-                                            Test
+                                            
+                                            Teste Başla
                                         </a>
                                     </div>
                                 </div>

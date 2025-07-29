@@ -9,9 +9,6 @@
     <div class="row mb-5">
         <div class="col-12 text-center">
             <div class="hero-section">
-                <div class="hero-icon mb-4">
-                    <i class="fas fa-chart-line fa-4x text-primary"></i>
-                </div>
                 <h1 class="display-4 fw-bold mb-3 text-primary">İlerleme Raporu</h1>
                 <p class="lead text-muted">
                     <i class="fas fa-map-marked-alt me-2"></i>
@@ -35,7 +32,7 @@
                         <div class="flex-grow-1">
                             <h5 class="fw-bold mb-3">
                                 <i class="fas fa-sparkles me-2"></i>
-                                AI Değerlendirmesi
+                                Eğitim Maskotu
                             </h5>
                             <p class="mb-0 lead" style="line-height: 1.8;">
                                 @Model.ProgressAnalysis
@@ -47,8 +44,12 @@
         </div>
     </div>
 
-    <!-- İstatistik Kartları -->
     <div class="row mb-5">
+        @{
+            var percent = Model.Session.Nodes.Count > 0//percenti burada ayrı tanımla yoksa bar dolmuyor
+            ? (int)(Model.CompletedNodes.Count * 100.0 / Model.Session.Nodes.Count)
+            : 0;
+        }
         <div class="col-md-3 mb-4">
             <div class="stat-card card border-0 shadow-lg h-100" style="border-radius: 20px;">
                 <div class="card-body text-center p-4">
@@ -65,7 +66,9 @@
                     </div>
                     <div class="progress mt-3" style="height: 8px;">
                         <div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
-                             style="width: @(((double)Model.CompletedNodes.Count / Model.Session.Nodes.Count) * 100)%">
+                             role="progressbar"
+                             style="width: @percent%;"
+                             aria-valuenow="@percent" aria-valuemin="0" aria-valuemax="100">
                         </div>
                     </div>
                 </div>
@@ -105,14 +108,7 @@
                         <h2 class="stat-number text-info fw-bold mb-2">@(Model.TotalTimeSpentMinutes)</h2>
                         <p class="stat-label text-muted mb-0">Dakika Harcandı</p>
                     </div>
-                    <div class="time-visualization mt-3">
-                        <div class="time-bars">
-                            <div class="time-bar" style="height: @(Math.Min(Model.TotalTimeSpentMinutes / 10, 40))px;"></div>
-                            <div class="time-bar" style="height: @(Math.Min(Model.TotalTimeSpentMinutes / 8, 35))px;"></div>
-                            <div class="time-bar" style="height: @(Math.Min(Model.TotalTimeSpentMinutes / 6, 30))px;"></div>
-                            <div class="time-bar" style="height: @(Math.Min(Model.TotalTimeSpentMinutes / 4, 25))px;"></div>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </div>
@@ -129,13 +125,7 @@
                         <h2 class="stat-number text-warning fw-bold mb-2">@(Model.Session.Nodes.Count - Model.CompletedNodes.Count)</h2>
                         <p class="stat-label text-muted mb-0">Kalan Konu</p>
                     </div>
-                    <div class="remaining-visualization mt-3">
-                        <div class="remaining-circle">
-                            <div class="remaining-inner">
-                                @(Model.Session.Nodes.Count - Model.CompletedNodes.Count)
-                            </div>
-                        </div>
-                    </div>
+                   
                 </div>
             </div>
         </div>
