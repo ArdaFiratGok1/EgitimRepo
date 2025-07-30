@@ -17,7 +17,6 @@
                 </div>
 
                 <div class="card-body p-5">
-                    <!-- Tebrik Mesajı -->
                     <div class="text-center mb-5">
                         <div class="celebration-icon mb-4">
                             <i class="fas fa-trophy fa-4x text-warning"></i>
@@ -28,7 +27,6 @@
                         </p>
                     </div>
 
-                    <!-- Münazara Detayları -->
                     <div class="row mb-5">
                         <div class="col-12">
                             <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); border-radius: 15px;">
@@ -58,7 +56,6 @@
                         </div>
                     </div>
 
-                    <!-- İstatistikler -->
                     <div class="row mb-5">
                         <div class="col-md-4 mb-3">
                             <div class="stat-card text-center p-4" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 15px;">
@@ -83,7 +80,6 @@
                         </div>
                     </div>
 
-                    <!-- Son Mesajlar Özeti -->
                     <div class="card border-0 shadow-sm mb-5" style="border-radius: 15px;">
                         <div class="card-header bg-light border-0" style="border-radius: 15px 15px 0 0;">
                             <h6 class="mb-0 fw-bold">
@@ -132,7 +128,6 @@
                         </div>
                     </div>
 
-                    <!-- Sonraki Adımlar -->
                     <div class="alert alert-success border-0 shadow-sm mb-5" style="border-radius: 15px; background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);">
                         <div class="text-center">
                             <h6 class="alert-heading fw-bold">
@@ -146,7 +141,6 @@
                         </div>
                     </div>
 
-                    <!-- Aksiyon Butonları -->
                     <div class="text-center">
                         <form method="post" action="@Url.Action("GoToResult")" class="d-inline me-3">
                             <button type="submit" class="btn btn-warning btn-lg px-5 py-3 text-dark fw-bold" style="border-radius: 12px;">
@@ -248,7 +242,6 @@
         color: white;
     }
 
-    /* Scrollbar styling */
     .card-body::-webkit-scrollbar {
         width: 6px;
     }
@@ -285,7 +278,6 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Smooth animations
             const cards = document.querySelectorAll('.stat-card, .message-summary');
             cards.forEach((card, index) => {
                 card.style.opacity = '0';
@@ -298,7 +290,6 @@
                 }, index * 100);
             });
 
-            // Form submission loading
             const form = document.querySelector('form');
             if (form) {
                 form.addEventListener('submit', function() {

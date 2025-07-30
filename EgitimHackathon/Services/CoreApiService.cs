@@ -11,7 +11,7 @@ namespace EgitimMaskotuApp.Services
         public string Source { get; set; }
     }
 
-    // --- DTO'lar GERÇEK CORE API YANITINA GÖRE GÜNCELLENDİ ---
+    
 
     public class CoreApiResponse
     {
@@ -30,7 +30,7 @@ namespace EgitimMaskotuApp.Services
         [JsonProperty("title")]
         public string Title { get; set; }
 
-        // DEĞİŞİKLİK: 'List<string>' yerine 'List<CoreApiAuthor>' yapıldı
+        
         [JsonProperty("authors")]
         public List<CoreApiAuthor> Authors { get; set; } = new();
 
@@ -44,7 +44,7 @@ namespace EgitimMaskotuApp.Services
         public string Doi { get; set; }
     }
 
-    // DEĞİŞİKLİK: Gelen JSON'daki {"name": "..."} yapısını karşılamak için yeni bir sınıf eklendi
+   
     public class CoreApiAuthor
     {
         [JsonProperty("name")]
@@ -74,12 +74,10 @@ namespace EgitimMaskotuApp.Services
 
             try
             {
-                // === DEĞİŞİKLİK: TÜM FİLTRELER KALDIRILDI ===
-                // API'ye sadece ve sadece konunun kendisi gönderiliyor.
-                // Bu, sonuç almayı garanti altına almanın en basit yoludur.
+                
                 var encodedQuery = Uri.EscapeDataString(query);
                 var requestUrl = $"{_baseUrl}/search/works?q={encodedQuery}&limit={count}&api_key={_apiKey}";
-                Console.WriteLine($"[DEBUG] API İsteği URL: {requestUrl}"); // Bu satır önemli!
+                Console.WriteLine($"[!!debug!!] API İsteği URL: {requestUrl}"); //doğru çalışıyor mu kontrol
                 // ===========================================
 
                 var response = await _httpClient.GetAsync(requestUrl);
@@ -99,8 +97,8 @@ namespace EgitimMaskotuApp.Services
                             Source = work.Authors.Any() ? string.Join(", ", work.Authors.Select(a => a.Name)) : "CORE Academic"
                         }).Where(r => !string.IsNullOrEmpty(r.Url)).ToList();
 
-                        // Kaliteyi artırmak için sıralama mantığı hala devrede.
-                        var rankedResults = searchResults
+                        
+                        var rankedResults = searchResults//en iyisini getirmesi için sıralama
                             .Select(r => new { Result = r, Score = CalculateRelevanceScore(r, query) })
                             .OrderByDescending(x => x.Score)
                             .Select(x => x.Result)
@@ -138,7 +136,7 @@ namespace EgitimMaskotuApp.Services
 
         public async Task<string> GetBestArticleForTopicAsync(string topic)
         {
-            var articles = await SearchArticlesAsync(topic, 5); // 1 yerine 5 sonuç isteyip en iyisini seçmek daha iyi
+            var articles = await SearchArticlesAsync(topic, 5); //1 yerine 5 sonuç isteyip en iyisini seçmek daha iyi
             return articles.FirstOrDefault()?.Url ?? $"https://scholar.google.com/scholar?q={Uri.EscapeDataString(topic)}";
         }
 

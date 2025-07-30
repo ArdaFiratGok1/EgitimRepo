@@ -38,8 +38,8 @@ namespace EgitimMaskotuApp.Services
                 searchListRequest.MaxResults = maxResults;
                 searchListRequest.Order = Google.Apis.YouTube.v3.SearchResource.ListRequest.OrderEnum.Relevance;
 
-                // Türkçe içerik için region code
-                searchListRequest.RegionCode = "TR";
+                searchListRequest.RegionCode = "TR"; //Türkçe içerik için region code
+
                 searchListRequest.RelevanceLanguage = "tr";
 
                 var searchListResponse = await searchListRequest.ExecuteAsync();

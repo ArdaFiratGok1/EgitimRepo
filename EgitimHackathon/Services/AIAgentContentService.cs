@@ -15,13 +15,10 @@ namespace EgitimMaskotuApp.Services
         public string Url { get; set; }
         public string Description { get; set; }
         public string Source { get; set; }
-        public string Type { get; set; } // "Video" or "Article"
+        public string Type { get; set; } //video ya da makale
         public string ThumbnailUrl { get; set; }
     }
 
-    /// <summary>
-    /// /////////////////////////////////////////////
-    /// </summary>
     public class AIAgentContentService
     {
         private readonly YouTubeService _youtubeService;
@@ -35,18 +32,18 @@ namespace EgitimMaskotuApp.Services
             _geminiApiService = geminiApiService;
         }
 
-        // LearningNode'u içerikle zenginleştir
+        
         public async Task<LearningNode> EnrichNodeWithContentAsync(LearningNode node, string userLevel)
         {
             try
             {
                 var originalSearchQuery = !string.IsNullOrEmpty(node.Title) ? node.Title : string.Join(" ", node.Keywords);
 
-                // 1. Makale araması için konuyu İngilizce'ye çevir
+                //Makale araması için konuyu İngilizce'ye çeviriyorum, bu sayede çok daha fazla makaleye ulaşabileceğim.
                 var englishSearchQuery = await _geminiApiService.TranslateToEnglishAcademicQueryAsync(originalSearchQuery);
                 Console.WriteLine($"[DEBUG] Türkçe Sorgu: {originalSearchQuery} -> İngilizce Sorgu: {englishSearchQuery}");
 
-                // 2. API'leri bu sorgularla çağır
+                //yukardaki sorguya göre API'yi çalıştır.
                 var videoTask = _youtubeService.SearchVideosAsync(originalSearchQuery, 1);
                 var articleTask = _coreApiService.SearchArticlesAsync(englishSearchQuery, 5, userLevel);
                 var aiExplanationTask = _geminiApiService.GenerateTopicExplanationAsync(originalSearchQuery, userLevel);
@@ -86,7 +83,7 @@ namespace EgitimMaskotuApp.Services
             }
         }
 
-        // Session'daki tüm node'ları zenginleştir
+       
         public async Task<AIAgentSession> EnrichSessionWithContentAsync(AIAgentSession session)
         {
             var semaphore = new SemaphoreSlim(3, 3);
@@ -96,7 +93,7 @@ namespace EgitimMaskotuApp.Services
                 await semaphore.WaitAsync();
                 try
                 {
-                    // === DEĞİŞİKLİK BURADA: Eksik olan 'session.UserLevel' parametresi eklendi ===
+                    
                     return await EnrichNodeWithContentAsync(node, session.UserLevel);
                 }
                 finally
@@ -141,25 +138,8 @@ namespace EgitimMaskotuApp.Services
             };
         }
 
-        // Yardımcı metodlar
-        private List<string> ExtractKeywords(string title)
-        {
-            if (string.IsNullOrEmpty(title)) return new List<string>();
-
-            var words = title.Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                             .Where(w => w.Length > 2)
-                             .Select(w => w.ToLower().Trim(',', '.', '!', '?', ':', ';'))
-                             .Where(w => !IsStopWord(w))
-                             .Take(5)
-                             .ToList();
-            return words;
-        }
-
-        private bool IsStopWord(string word)
-        {
-            var stopWords = new[] { "ve", "ile", "için", "bir", "bu", "şu", "o", "da", "de", "ta", "te", "la", "le" };
-            return stopWords.Contains(word);
-        }
+        
+     
 
         private string TruncateText(string text, int maxLength)
         {
@@ -169,7 +149,7 @@ namespace EgitimMaskotuApp.Services
             return text.Substring(0, maxLength) + "...";
         }
 
-        // Mevcut mock metodlarınızı gerçek API'lerle değiştirmek için
+        
         public async Task<string> SearchYouTubeVideo(string query)
         {
             return await _youtubeService.GetBestVideoForTopicAsync(query);

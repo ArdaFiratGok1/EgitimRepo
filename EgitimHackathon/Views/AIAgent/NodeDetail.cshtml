@@ -26,7 +26,6 @@ else
     isCompleted = Model.Session.CompletedNodeIds.Contains(Model.CurrentNode.Id);
 
     <div class="container mt-4">
-        <!-- Breadcrumb Navigation -->
         <div class="row mb-4">
             <div class="col-12">
                 <nav aria-label="breadcrumb">
@@ -105,7 +104,6 @@ else
             </div>
         </div>
 
-        <!-- Erişim Kontrolü -->
         @if (!Model.CanAccess)
         {
             <div class="row mb-5">
@@ -143,12 +141,11 @@ else
             </div>
         }
 
-        <!-- Ana İçerik -->
         @if (Model.CanAccess)
         {
             <div class="row">
                 <div class="col-lg-8">
-                    <!-- AI Açıklaması -->
+                    <!-- Maskotun Açıklama Kısmı -->
                     <div class="content-card card shadow-lg border-0 mb-5" style="border-radius: 20px;">
                         <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px 20px 0 0;">
                             <h5 class="mb-0 fw-bold">
@@ -328,7 +325,7 @@ else
                         </div>
                     </div>
 
-                    <!-- Anahtar Kelimeler -->
+                    <!-- Anahtar Kelimeler (bu kısmı önerilerin neye gmre yapıldığını göstermek için koydum-->
                     @if (Model.CurrentNode.Keywords != null && Model.CurrentNode.Keywords.Any())
                     {
                         <div class="content-card card shadow-lg border-0 mb-5" style="border-radius: 20px;">
@@ -353,7 +350,6 @@ else
                     }
                 </div>
 
-                <!-- Yan Panel -->
                 <div class="col-lg-4">
                     <!-- İlerleme Durumu -->
                     <div class="sidebar-card card shadow-lg border-0 mb-4" style="border-radius: 20px;">
@@ -394,7 +390,7 @@ else
                         </div>
                     </div>
 
-                    <!-- Sonraki Konular -->
+                    <!-- Sonraki Konular (sırayla))-->
                     @if (Model.NextNodes != null && Model.NextNodes.Any())
                     {
                         <div class="sidebar-card card shadow-lg border-0 mb-4" style="border-radius: 20px;">
@@ -424,7 +420,6 @@ else
                         </div>
                     }
 
-                    <!-- Navigasyon -->
                     <div class="sidebar-card card shadow-lg border-0" style="border-radius: 20px;">
                         <div class="card-body p-4 text-center">
                             <div class="d-grid">
@@ -453,13 +448,11 @@ else
                     const button = form.querySelector('button[type="submit"]');
                     const originalHTML = button.innerHTML;
 
-                    // Buton durumunu güncelle
                     button.disabled = true;
                     button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Kaydediliyor...';
 
                     const formData = new FormData(form);
 
-                    // AJAX isteği gönder
                     fetch('@Url.Action("CompleteNode", "AIAgent")', {
                         method: 'POST',
                         body: formData
@@ -467,17 +460,14 @@ else
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // Başarı animasyonu göster
                             button.innerHTML = '<i class="fas fa-check me-2"></i>Başarılı!';
                             button.classList.remove('btn-success');
                             button.classList.add('btn-outline-success');
 
-                            // 1 saniye sonra yönlendir
                             setTimeout(() => {
                                 window.location.href = '@Url.Action("Dashboard", "AIAgent")';
                             }, 1000);
                         } else {
-                            // Hata durumu
                             alert('Bir hata oluştu: ' + data.message);
                             button.disabled = false;
                             button.innerHTML = originalHTML;

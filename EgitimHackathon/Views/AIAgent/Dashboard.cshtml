@@ -64,7 +64,7 @@ else
             </div>
         </div>
 
-        <!-- AI Önerisi -->
+        <!-- Eğitim Masktou Önerisi -->
         @if (!string.IsNullOrEmpty(Model.CurrentRecommendation))
         {
             <div class="row mb-4">
@@ -137,7 +137,6 @@ else
         </div>
 
         <div class="row">
-            <!-- Ana Yol Haritası -->
             <div class="col-lg-8">
                 <div class="card shadow-lg border-0" style="border-radius: 20px;">
                     <div class="card-header text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px 20px 0 0;">
@@ -271,7 +270,6 @@ else
                 </div>
             </div>
 
-            <!-- Yan Panel -->
             <div class="col-lg-4">
                 <!-- Şimdi Çalışabilirsiniz -->
                 <div class="card shadow-lg border-0 mb-4" style="border-radius: 20px;">
@@ -355,7 +353,6 @@ else
                     </div>
                 </div>
 
-                <!-- Aksiyon Butonları -->
                 <div class="card shadow-lg border-0" style="border-radius: 20px;">
                     <div class="card-body p-4">
                         <div class="d-grid gap-3">
@@ -366,6 +363,12 @@ else
                             <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary btn-lg" style="border-radius: 12px;">
                                 <i class="fas fa-home me-2"></i>
                                 Ana Sayfa
+                            </a>
+                            <a href="@Url.Action("Index", "Sokratik")"
+                               class="btn btn-outline-success btn-lg fs-5"
+                               style="border-radius: 12px;">
+                                <i class="fas fa-graduation-cap me-2"></i>
+                                Sanal Öğretmeni Dene
                             </a>
                         </div>
                     </div>

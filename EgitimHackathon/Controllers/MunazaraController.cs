@@ -83,7 +83,6 @@ namespace EgitimMaskotuApp.Controllers
 
             try
             {
-                // Kullanıcı mesajını ekle
                 session.Messages.Add(new MunazaraMessage
                 {
                     Speaker = "user",
@@ -92,10 +91,8 @@ namespace EgitimMaskotuApp.Controllers
 
                 session.TurnCount++;
 
-                // AI yanıtı al (münazara bitmeden önce)
                 var aiResponse = await _geminiService.GenerateMunazaraResponseAsync(session, message);
 
-                // AI yanıtını ekle
                 session.Messages.Add(new MunazaraMessage
                 {
                     Speaker = "ai",
@@ -104,16 +101,13 @@ namespace EgitimMaskotuApp.Controllers
 
                 session.TurnCount++;
 
-                // Eğer maksimum turn sayısına ulaştıysak münazarayı bitir
                 if (session.TurnCount >= session.MaxTurns)
                 {
                     session.IsActive = false;
                 }
 
-                // Session'ı güncelle
                 HttpContext.Session.SetString("MunazaraSession", JsonSerializer.Serialize(session));
 
-                // Chat sayfasını göster (münazara bitmiş olsa bile, kullanıcı son yanıtı okuyabilsin)
                 return View("Chat", new MunazaraChatViewModel { Session = session });
             }
             catch (Exception ex)
@@ -123,7 +117,6 @@ namespace EgitimMaskotuApp.Controllers
             }
         }
 
-        // Münazarayı bitir butonuna basıldığında
         [HttpPost]
         public IActionResult FinishMunazara()
         {
@@ -140,7 +133,6 @@ namespace EgitimMaskotuApp.Controllers
             return View("Finished", new MunazaraChatViewModel { Session = session });
         }
 
-        // Yeni action: Münazara bitişini göster
         public IActionResult Finished()
         {
             var sessionJson = HttpContext.Session.GetString("MunazaraSession");
@@ -153,7 +145,6 @@ namespace EgitimMaskotuApp.Controllers
             return View(new MunazaraChatViewModel { Session = session });
         }
 
-        // Sonuç sayfasına gitme action'ı
         [HttpPost]
         public IActionResult GoToResult()
         {
@@ -172,7 +163,6 @@ namespace EgitimMaskotuApp.Controllers
 
             try
             {
-                // Münazara sonucunu değerlendir
                 var result = await _geminiService.EvaluateMunazaraAsync(session);
 
                 ViewBag.Session = session;

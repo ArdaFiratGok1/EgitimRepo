@@ -18,13 +18,13 @@ namespace EgitimMaskotuApp.Controllers
             _contentService = contentService;
         }
 
-        // Ana sayfa - Konu girişi
+        
         public IActionResult Index()
         {
             return View(new AIAgentStartViewModel());
         }
 
-        // Yol haritası oluşturma
+        
         [HttpPost]
         public async Task<IActionResult> CreateRoadmap(AIAgentStartViewModel model)
         {
@@ -52,11 +52,11 @@ namespace EgitimMaskotuApp.Controllers
                     UserLevel = model.UserLevel
                 };
 
-                // Düğümleri oluştur (Bu metot artık sadece iskeleti oluşturuyor)
+                
                 CreateLearningNodes(session, generatedRoadmap);
 
-                // Session'ı kaydet
-                SaveSession(session);
+                
+                SaveSession(session);//DB değil sessionlar üzerinden bir memory tutulacak.
 
                 return RedirectToAction("Dashboard");
             }
@@ -67,7 +67,7 @@ namespace EgitimMaskotuApp.Controllers
             }
         }
 
-        // Ana dashboard
+        
         public async Task<IActionResult> Dashboard()
         {
             var session = GetSession();
@@ -96,7 +96,7 @@ namespace EgitimMaskotuApp.Controllers
             return View(viewModel);
         }
 
-        // Düğüm detayı
+        
         public async Task<IActionResult> NodeDetail(string nodeId)
         {
             var session = GetSession();
@@ -111,17 +111,17 @@ namespace EgitimMaskotuApp.Controllers
                 return NotFound();
             }
 
-            // Eğer içerik henüz üretilmemişse, AIAgentContentService'i kullanarak üret.
+            //İçerik yoksa AIAgent'te yazdıgım fonksiyondan içerik üreitp onu çekiyorm
             if (string.IsNullOrEmpty(node.AIExplanation) ||
                 string.IsNullOrEmpty(node.VideoUrl) ||
                 string.IsNullOrEmpty(node.ArticleUrl))
             {
                 try
                 {
-                    // === DEĞİŞİKLİK BURADA: Eksik olan 'session.UserLevel' parametresi eklendi ===
+                    
                     node = await _contentService.EnrichNodeWithContentAsync(node, session.UserLevel);
 
-                    // Session'ı güncelle
+                    
                     SaveSession(session);
                 }
                 catch (Exception ex)
@@ -141,15 +141,13 @@ namespace EgitimMaskotuApp.Controllers
 
             return View(viewModel);
         }
-        // Düğümü tamamla
+        
         [HttpPost]
         public IActionResult CompleteNode(string nodeId)
         {
             var session = GetSession();
             if (session == null)
             {
-                // Session yoksa hata döndür veya Index'e yönlendir.
-                // API çağrısı için JSON hatası daha uygun olabilir.
                 return Json(new { success = false, message = "Oturum bulunamadı." });
             }
 
@@ -179,7 +177,7 @@ namespace EgitimMaskotuApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetContentSuggestions(string topic)
+        public async Task<IActionResult> GetContentSuggestions(string topic)//Eğitim maskotu önerilerini partial view
         {
             if (string.IsNullOrWhiteSpace(topic))
             {
@@ -189,7 +187,7 @@ namespace EgitimMaskotuApp.Controllers
             try
             {
                 var suggestions = await _contentService.GetContentSuggestionsAsync(topic);
-                return PartialView("_ContentSuggestionsPartial", suggestions); // Önerileri bir partial view ile döndür
+                return PartialView("_ContentSuggestionsPartial", suggestions); 
             }
             catch (Exception ex)
             {
@@ -222,7 +220,7 @@ namespace EgitimMaskotuApp.Controllers
                     {
                         Title = topic.Title,
                         Category = category.Name,
-                        Level = 2, // Alt konu seviyesi
+                        Level = 2, //Alt konu seviyesi
                         EstimatedMinutes = topic.EstimatedMinutes,
                         Difficulty = topic.Difficulty,
                         Keywords = topic.Keywords,
@@ -245,7 +243,7 @@ namespace EgitimMaskotuApp.Controllers
      
         private List<LearningNode> GetAvailableNodes(AIAgentSession session)
         {
-            // Önkoşulları tamamlanmış ve henüz başlanmamış düğümler
+            
             return session.Nodes.Where(node =>
                 !session.CompletedNodeIds.Contains(node.Id) &&
                 CanAccessNode(session, node)
@@ -261,7 +259,7 @@ namespace EgitimMaskotuApp.Controllers
 
         private List<LearningNode> GetNextNodes(AIAgentSession session, LearningNode currentNode)
         {
-            // Mevcut düğümü önkoşul olarak kullanan düğümler
+            
             return session.Nodes.Where(n =>
                 n.PrerequisiteIds.Contains(currentNode.Id)
             ).Take(3).ToList();
@@ -269,7 +267,7 @@ namespace EgitimMaskotuApp.Controllers
 
         private bool CanAccessNode(AIAgentSession session, LearningNode node)
         {
-            // Tüm önkoşullar tamamlandı mı kontrol et
+            
             return node.PrerequisiteIds.All(prereqId =>
                 session.CompletedNodeIds.Contains(prereqId));
         }
@@ -284,12 +282,12 @@ namespace EgitimMaskotuApp.Controllers
         {
             var colors = new Dictionary<string, string>
             {
-                {"Temel Kavramlar", "#28a745"},      // Yeşil
-                {"Makine Öğrenmesi", "#007bff"},     // Mavi  
-                {"Derin Öğrenme", "#dc3545"},        // Kırmızı
-                {"Uygulamalar", "#ffc107"},          // Sarı
-                {"İleri Konular", "#6f42c1"},        // Mor
-                {"Praktik", "#fd7e14"}               // Turuncu
+                {"Temel Kavramlar", "#28a745"},      //yeşik
+                {"Makine Öğrenmesi", "#007bff"},     //mavimsi
+                {"Derin Öğrenme", "#dc3545"},        //kırmızı
+                {"Uygulamalar", "#ffc107"},          //sarı-turuncu gibi
+                {"İleri Konular", "#6f42c1"},        //mor
+                {"Praktik", "#fd7e14"}               //Turuncu
             };
 
             return colors.ContainsKey(categoryName) ? colors[categoryName] : "#6c757d";
@@ -303,7 +301,7 @@ namespace EgitimMaskotuApp.Controllers
                 var session = GetSession();
                 var userLevel = session?.UserLevel ?? "Başlangıç";
 
-                var quizData = await _geminiService.GenerateQuizAsync(topic, userLevel, 10); // 10 soruluk bir sınav, istersen değişiyo
+                var quizData = await _geminiService.GenerateQuizAsync(topic, userLevel, 10); // 10 soru olacak şekilde ayarladım.
 
                 var quizSession = new QuizSession
                 {
@@ -311,36 +309,35 @@ namespace EgitimMaskotuApp.Controllers
                     Questions = quizData.Questions
                 };
 
-                // Sınavı HTTP Session'a kaydediyoruz
-                HttpContext.Session.SetString("QuizSession", JsonSerializer.Serialize(quizSession));
+                
+                HttpContext.Session.SetString("QuizSession", JsonSerializer.Serialize(quizSession));//tüm sınavı session atıyorum
 
                 return View("Quiz", quizSession);
             }
             catch (Exception ex)
             {
-                // Hata durumunda kullanıcıyı dashboard'a geri yönlendir
+                
                 TempData["ErrorMessage"] = "Sınav oluşturulurken bir hata oluştu: " + ex.Message;
                 return RedirectToAction("Dashboard");
             }
         }
 
-        // Kullanıcının sınav cevaplarını alır ve sonucu gösterir
         [HttpPost]
         public IActionResult SubmitQuiz(Dictionary<int, int> userAnswers, int timeSpentSeconds)
         {
             var quizJson = HttpContext.Session.GetString("QuizSession");
             if (string.IsNullOrEmpty(quizJson))
             {
-                return RedirectToAction("Index"); // Session yoksa başa dön
+                return RedirectToAction("Index");
             }
 
             var quizSession = JsonSerializer.Deserialize<QuizSession>(quizJson);
             quizSession.UserAnswers = userAnswers;
             quizSession.IsSubmitted = true;
 
-            // Puanı hesapla
+            
             int correctAnswers = 0;
-            for (int i = 0; i < quizSession.Questions.Count; i++)
+            for (int i = 0; i < quizSession.Questions.Count; i++)//çoktan seçmeli testt puanı
             {
                 if (userAnswers.ContainsKey(i))
                 {
@@ -353,11 +350,10 @@ namespace EgitimMaskotuApp.Controllers
             }
             quizSession.Score = (correctAnswers * 100) / quizSession.Questions.Count;
 
-            //
+            
             var roadmapSession = GetSession();
             if (roadmapSession != null)
             {
-                // 2. Yeni bir test sonucu nesnesi oluştur
                 var newQuizResult = new QuizHistory
                 {
                     Topic = quizSession.Topic,
@@ -367,14 +363,11 @@ namespace EgitimMaskotuApp.Controllers
                     TimeSpentSeconds = timeSpentSeconds
                 };
 
-                // 3. Bu sonucu yol haritası session'ındaki listeye ekle
+                
                 roadmapSession.QuizHistory.Add(newQuizResult);
 
-                // 4. Güncellenmiş yol haritası session'ını kaydet
                 SaveSession(roadmapSession);
             }
-            //
-            // Sonucu session'a geri kaydet
             HttpContext.Session.SetString("QuizSession", JsonSerializer.Serialize(quizSession));
 
             return View("QuizResult", quizSession);
@@ -382,22 +375,20 @@ namespace EgitimMaskotuApp.Controllers
 
         public async Task<IActionResult> Progress()
         {
-            var session = GetSession(); // Zaten var olan yardımcı metodun
+            var session = GetSession(); 
             if (session == null)
             {
                 return RedirectToAction("Index");
             }
 
-            // Gerçek uygulamada bu veriler veritabanından gelir. Şimdilik session'dan alıyoruz.
             var completedNodes = session.Nodes.Where(n => session.CompletedNodeIds.Contains(n.Id)).ToList();
-            var totalTimeSpent = completedNodes.Sum(n => n.EstimatedMinutes); // Basit bir tahmin
+            var totalTimeSpent = completedNodes.Sum(n => n.EstimatedMinutes); 
 
-            // Gemini'den analiz metni al
+            //Gemini'den analiz metnini alıyorum
             string analysis = "İlerleme analizi alınamadı.";
             try
             {
-                // Bu metodu daha önce oluşturmuştuk, şimdi kullanıyoruz.
-                // `userProgresses` için geçici bir liste oluşturalım.
+                //İlerleme kısmı için geçici bir liste ayarladı m
                 var userProgresses = completedNodes.Select(n => new UserProgress { TimeSpentMinutes = n.EstimatedMinutes }).ToList();
                 analysis = await _geminiService.GenerateProgressAnalysisAsync(session, userProgresses);
             }
@@ -411,13 +402,13 @@ namespace EgitimMaskotuApp.Controllers
             {
                 Session = session,
                 CompletedNodes = completedNodes,
-                CompletionPercentage = CalculateCompletionPercentage(session), // Zaten var olan yardımcı metodun
+                CompletionPercentage = CalculateCompletionPercentage(session), 
                 ProgressAnalysis = analysis,
                 TotalTimeSpentMinutes = totalTimeSpent,
-                QuizHistory = session.QuizHistory.OrderByDescending(q => q.CompletedAt).ToList() // En yeniden eskiye sırala
+                QuizHistory = session.QuizHistory.OrderByDescending(q => q.CompletedAt).ToList() 
             };
 
-            return View(viewModel); // Yeni oluşturacağımız Progress.cshtml'e modeli gönder
+            return View(viewModel);
         }
 
     }

@@ -6,7 +6,6 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <!-- Ana Başlık -->
             <div class="text-center mb-5">
                 <div class="mb-4">
                     <i class="fas fa-question-circle fa-4x text-success mb-3"></i>
@@ -17,7 +16,6 @@
                 </div>
             </div>
 
-            <!-- Özellikler -->
             <div class="row mb-5">
                 <div class="col-md-4 text-center">
                     <div class="feature-card p-4">
@@ -48,7 +46,6 @@
                 </div>
             </div>
 
-            <!-- Form -->
             <div class="card shadow-lg border-0" style="border-radius: 20px;">
                 <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border-radius: 20px 20px 0 0;">
                     <h3 class="mb-0">
@@ -74,7 +71,6 @@
                             </div>
                         }
 
-                        <!-- Konu -->
                         <div class="mb-4">
                             <label asp-for="Konu" class="form-label fw-bold">
                                 Öğrenmek İstediğiniz Konu *
@@ -96,7 +92,6 @@
                             </div>
                         </div>
 
-                        <!-- Sokratik Yöntem Açıklaması -->
                         <div class="alert alert-info border-0 shadow-sm mb-4" style="border-radius: 12px;">
                             <h6 class="alert-heading">
                                 <i class="fas fa-question-circle me-2"></i>
@@ -118,7 +113,6 @@
                             </div>
                         </div>
 
-                        <!-- Submit Button -->
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-success btn-lg py-3" style="border-radius: 12px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); border: none;">
                                 <i class="fas fa-play me-2"></i>
@@ -133,7 +127,6 @@
                 </div>
             </div>
 
-            <!-- Öğrenme İpuçları -->
             <div class="row mt-5">
                 <div class="col-12">
                     <div class="card bg-light border-0" style="border-radius: 15px;">
@@ -167,7 +160,6 @@
                 </div>
             </div>
 
-            <!-- Öğrenme Süreci -->
             <div class="row mt-4">
                 <div class="col-12">
                     <div class="card border-0"
@@ -178,7 +170,6 @@
                                 <i class="fas fa-route me-2"></i>
                                 Öğrenme Süreciniz Nasıl Olacak?
                             </h5>
-                            <!-- Buraya justify-content-center ekledik -->
                             <div class="row text-center justify-content-center">
                                 <div class="col-md-3">
                                     <div class="step-item mb-3">
@@ -285,7 +276,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Form validation
         const form = document.querySelector('form');
         const topicInput = document.querySelector('textarea[name="Konu"]');
 
@@ -297,7 +287,6 @@
             }
         });
 
-        // Smooth scroll for navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();

@@ -18,7 +18,7 @@
         </div>
     </div>
 
-    <!-- AI Değerlendirmesi -->
+    <!-- Maskotun değerlendirmesi -->
     <div class="row mb-5">
         <div class="col-12">
             <div class="ai-analysis-card card shadow-lg border-0" style="border-radius: 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
@@ -269,7 +269,6 @@
         </div>
     </div>
 
-    <!-- Navigasyon -->
     <div class="row">
         <div class="col-12 text-center">
             <div class="navigation-section">
@@ -283,7 +282,6 @@
 </div>
 
 <style>
-    /* Ana Tasarım */
     .hero-section {
         animation: fadeInUp 0.8s ease-out;
     }
@@ -296,7 +294,6 @@
         box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
     }
 
-    /* AI Analiz Kartı */
     .ai-analysis-card {
         position: relative;
         overflow: hidden;
@@ -326,7 +323,6 @@
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
 
-    /* İstatistik Kartları */
     .stat-card {
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         position: relative;
@@ -371,7 +367,6 @@
         font-weight: 700;
     }
 
-    /* Dairesel Progress */
     .circular-progress {
         position: relative;
         width: 60px;
@@ -407,7 +402,6 @@
         color: #007bff;
     }
 
-    /* Zaman Visualizasyonu */
     .time-visualization {
         display: flex;
         align-items: end;
@@ -428,7 +422,6 @@
         animation: barGrow 1s ease-out;
     }
 
-    /* Kalan Konu Visualizasyonu */
     .remaining-visualization {
         display: flex;
         justify-content: center;
@@ -451,7 +444,6 @@
         font-size: 14px;
     }
 
-    /* Test Geçmişi */
     .quiz-history-card, .completed-topics-card {
         transition: all 0.3s ease;
     }
@@ -481,7 +473,6 @@
             width: 4px;
         }
 
-    /* Skor Dairesi */
     .score-circle {
         width: 60px;
         height: 60px;
@@ -524,7 +515,6 @@
         opacity: 0.7;
     }
 
-    /* Tamamlanan Konular */
     .completed-badge {
         background: rgba(40, 167, 69, 0.1);
         border-radius: 50%;
@@ -540,7 +530,6 @@
         transform: translateX(5px);
     }
 
-    /* Boş Durum */
     .empty-state {
         animation: fadeInUp 0.6s ease-out;
     }
@@ -549,12 +538,10 @@
         opacity: 0.5;
     }
 
-    /* Navigasyon */
     .navigation-section {
         animation: fadeInUp 0.8s ease-out;
     }
 
-    /* Genel Animasyonlar */
     @@keyframes fadeInUp {
         from
 
@@ -600,7 +587,6 @@
 
     }
 
-    /* Buton Animasyonları */
     .btn {
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         position: relative;
@@ -630,7 +616,6 @@
             height: 300px;
         }
 
-    /* Progress Bar Animasyonu */
     .progress-bar-animated {
         animation: progress-bar-stripes 1s linear infinite;
     }
@@ -648,7 +633,6 @@
 
     }
 
-    /* Responsive Düzenlemeler */
     @@media (max-width: 768px) {
         .hero-icon
 
@@ -677,7 +661,6 @@
 
     }
 
-    /* Kart Girişi Animasyonu */
     .card {
         animation: fadeInUp 0.6s ease-out;
     }
@@ -694,12 +677,10 @@
             animation-delay: 0.3s;
         }
 
-    /* Hover Geçiş Efektleri */
     .transition-hover {
         transition: all 0.3s ease;
     }
 
-    /* Progress Circle Data Attribute */
     .progress-circle[data-percentage] {
         --percentage: attr(data-percentage);
     }
@@ -707,21 +688,18 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Progress circle animasyonu
         const progressCircles = document.querySelectorAll('.progress-circle');
         progressCircles.forEach(circle => {
             const percentage = circle.getAttribute('data-percentage');
             circle.style.setProperty('--percentage', percentage);
         });
 
-        // Time bars animasyonu
         const timeBars = document.querySelectorAll('.time-bar');
         timeBars.forEach(bar => {
             const height = bar.style.height;
             bar.style.setProperty('--final-height', height);
         });
 
-        // Sayaç animasyonu
         const statNumbers = document.querySelectorAll('.stat-number');
         statNumbers.forEach(number => {
             const finalValue = parseInt(number.textContent);

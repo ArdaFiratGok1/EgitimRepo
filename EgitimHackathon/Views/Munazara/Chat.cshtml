@@ -7,7 +7,6 @@
     <div class="row justify-content-center">
         <div class="col-lg-10 col-xl-8">
             <div class="card shadow-lg border-0" style="border-radius: 20px;">
-                <!-- Header -->
                 <div class="card-header py-3 text-white"
                      style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); border-radius: 20px 20px 0 0;">
                     <div class="d-flex align-items-center">
@@ -22,7 +21,6 @@
                 </div>
 
                 <div class="card-body p-0">
-                    <!-- Side Info -->
                     <div class="bg-light text-center py-2 border-bottom">
                         <div class="row">
                             <div class="col-6">
@@ -40,7 +38,6 @@
                         </div>
                     </div>
 
-                    <!-- Chat Messages -->
                     <div id="chatContainer" class="chat-container p-4" style="height: 500px; overflow-y: auto;">
                         @if (Model.Session.Messages.Any())
                         {
@@ -92,7 +89,6 @@
                         }
                     </div>
 
-                    <!-- Input / End State -->
                     @if (Model.Session.IsActive)
                     {
                         <div class="p-4 border-top bg-white">
@@ -162,7 +158,6 @@
                 </div>
             </div>
 
-            <!-- Hata Alanı -->
             @if (!ViewData.ModelState.IsValid)
             {
                 <div class="alert alert-danger border-0 shadow-sm mt-4" style="border-radius: 12px;">
@@ -256,10 +251,8 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Scroll to bottom
             var container = document.getElementById('chatContainer');
             if (container) container.scrollTop = container.scrollHeight;
-            // Auto-resize
             var ta = document.querySelector('textarea[name="message"]');
             if (ta) {
                 ta.addEventListener('input', function() {

@@ -24,18 +24,15 @@
                 </div>
 
                 <div class="card-body p-0">
-                    <!-- Öğretmen Bilgisi -->
                     <div class="bg-success text-white text-center py-2">
                         <small>Sanal Öğretmeniniz Sizinle</small>
                     </div>
 
-                    <!-- Chat Geçmişi -->
                     <div class="chat-container" id="chatContainer" style="height: 500px; overflow-y: auto; padding: 20px;">
                         @if (Model.Session.QAHistory.Any())
                         {
                             @foreach (var qa in Model.Session.QAHistory)
                             {
-                                <!-- Öğretmen Sorusu -->
                                 <div class="message ai-message mb-3">
                                     <div class="d-flex align-items-start">
                                         <div class="me-3 flex-shrink-0">
@@ -52,7 +49,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Öğrenci Cevabı -->
                                 <div class="message user-message mb-3">
                                     <div class="d-flex align-items-start justify-content-end">
                                         <div class="flex-grow-1 text-end" style="min-width: 0;">
@@ -69,7 +65,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Öğretmen Geri Bildirimi -->
                                 @if (!string.IsNullOrEmpty(qa.TeacherFeedback))
                                 {
                                     <div class="feedback-message mb-4">
@@ -87,7 +82,6 @@
                             }
                         }
 
-                        <!-- Mevcut Soru -->
                         @if (!string.IsNullOrEmpty(Model.CurrentQuestion))
                         {
                             <div class="message ai-message mb-3">
@@ -108,7 +102,6 @@
                         }
                     </div>
 
-                    <!-- Cevap Gönderme Alanı -->
                     @if (Model.Session.IsActive && Model.Session.QuestionCount < Model.Session.MaxQuestions)
                     {
                         <div class="p-4 border-top bg-light">
@@ -181,7 +174,6 @@
         </div>
     }
 
-    <!-- İlerleme Çubuğu -->
     <div class="row justify-content-center mt-3">
         <div class="col-lg-10 col-xl-8">
             <div class="card border-0 shadow-sm" style="border-radius: 15px;">
@@ -260,7 +252,6 @@
         box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     }
 
-    /* Responsive */
     @@media (max-width: 768px) {
         .message-bubble
 
@@ -281,7 +272,6 @@
 
 @section Scripts {
     <script>
-        // Chat alanını otomatik scroll et
         function scrollToBottom() {
             const chatContainer = document.getElementById('chatContainer');
             if (chatContainer) {
@@ -289,11 +279,9 @@
             }
         }
 
-        // Sayfa yüklendiğinde scroll et
         document.addEventListener('DOMContentLoaded', function() {
             scrollToBottom();
 
-            // Form submit edildiğinde loading göster
             const form = document.querySelector('form');
             if (form) {
                 form.addEventListener('submit', function() {
@@ -305,7 +293,6 @@
                 });
             }
 
-            // Textarea auto-resize
             const textarea = document.querySelector('textarea[name="answer"]');
             if (textarea) {
                 textarea.addEventListener('input', function() {

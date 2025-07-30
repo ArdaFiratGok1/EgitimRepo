@@ -6,7 +6,6 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
-            <!-- Ana Başlık -->
             <div class="text-center mb-5">
                 <div class="mb-4">
                     <i class="fas fa-comments fa-4x text-orange mb-3"></i>
@@ -18,7 +17,6 @@
                 </div>
             </div>
 
-            <!-- Özellikler -->
             <div class="row mb-5">
                 <div class="col-md-4 text-center">
                     <div class="feature-card p-4">
@@ -49,7 +47,6 @@
                 </div>
             </div>
 
-            <!-- Form -->
             <div class="card shadow-lg border-0" style="border-radius: 20px;">
                 <div class="card-header text-center py-4" style="background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%); color: white; border-radius: 20px 20px 0 0;">
                     <h3 class="mb-0">
@@ -75,7 +72,6 @@
                             </div>
                         }
 
-                        <!-- Konu -->
                         <div class="mb-4">
                             <label asp-for="Konu" class="form-label fw-bold">
                                 <i class="fas fa-lightbulb me-2 text-warning"></i>
@@ -98,7 +94,6 @@
                             </div>
                         </div>
 
-                        <!-- Münazara Süreci Açıklaması -->
                         <div class="alert alert-info border-0 shadow-sm mb-4" style="border-radius: 12px;">
                             <h6 class="alert-heading">
                                 <i class="fas fa-gears me-2"></i>
@@ -120,7 +115,6 @@
                             </div>
                         </div>
 
-                        <!-- Submit Button -->
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg py-3" style="border-radius: 12px; background: linear-gradient(135deg, #f7931e 0%, #ff6b35 100%); border: none;">
                                 <i class="fas fa-play me-2"></i>
@@ -135,7 +129,6 @@
                 </div>
             </div>
 
-            <!-- Münazara Rehberi -->
             <div class="row mt-5">
                 <div class="col-12">
                     <div class="card bg-light border-0" style="border-radius: 15px;">
@@ -187,7 +180,6 @@
                 </div>
             </div>
 
-            <!-- Münazara İpuçları -->
             <div class="row mt-4">
                 <div class="col-12">
                     <div class="card border-0" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-radius: 15px;">
@@ -231,7 +223,6 @@
                 </div>
             </div>
 
-            <!-- Popüler Münazara Konuları -->
            
         </div>
     </div>
@@ -326,7 +317,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Form validation
         const form = document.querySelector('form');
         const topicInput = document.querySelector('textarea[name="Konu"]');
 
@@ -338,7 +328,6 @@
             }
         });
 
-        // Smooth scroll for navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -348,7 +337,6 @@
             });
         });
 
-        // Auto-resize textarea
         const textarea = document.querySelector('textarea');
         if (textarea) {
             textarea.addEventListener('input', function() {

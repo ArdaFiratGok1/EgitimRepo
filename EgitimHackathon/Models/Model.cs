@@ -1,6 +1,6 @@
 ﻿namespace EgitimMaskotuApp.Models
 {
-    // Münazara için modeller
+    //Münazara için modeller
     public class MunazaraSession
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -11,12 +11,12 @@
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public int TurnCount { get; set; } = 0;
-        public int MaxTurns { get; set; } = 6; // 3'er mesaj olacagı içni
+        public int MaxTurns { get; set; } = 6;// 3'er mesaj olacagı içni
     }
 
     public class MunazaraMessage
     {
-        public string Speaker { get; set; } //Kullanıcı veya Gemini
+        public string Speaker { get; set; }//Kullanıcı veya Gemini
         public string Content { get; set; }
         public DateTime Timestamp { get; set; } = DateTime.Now;
     }
@@ -31,7 +31,7 @@
         public string DetailedAnalysis { get; set; }
     }
 
-    // Sokratik Öğretim için modeller
+    //öğretmen için modeller
     public class SokratikSession
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -51,7 +51,7 @@
         public DateTime Timestamp { get; set; } = DateTime.Now;
     }
 
-    // Gemini API için modeller
+    //Gemini API için modeller
     public class GeminiRequest
     {
         public List<GeminiContent> contents { get; set; } = new();
@@ -77,7 +77,7 @@
         public GeminiContent content { get; set; }
     }
 
-    // View Modeller
+    //view tarafı için modeller:
     public class MunazaraStartViewModel
     {
         public string Konu { get; set; }

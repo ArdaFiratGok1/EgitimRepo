@@ -30,7 +30,6 @@ namespace EgitimMaskotuApp.Controllers
 
             try
             {
-                // İlk soruyu al
                 var firstQuestion = await _geminiService.GenerateFirstSokratikQuestionAsync(model.Konu);
 
                 var session = new SokratikSession
@@ -38,7 +37,6 @@ namespace EgitimMaskotuApp.Controllers
                     Konu = model.Konu
                 };
 
-                // Session'a kaydet
                 HttpContext.Session.SetString("SokratikSession", JsonSerializer.Serialize(session));
 
                 var viewModel = new SokratikChatViewModel
@@ -74,19 +72,15 @@ namespace EgitimMaskotuApp.Controllers
 
             try
             {
-                // Şu anki soruyu bul (form'dan gelen hidden field'dan alacağız)
                 string currentQuestion = Request.Form["currentQuestion"];
 
                 if (string.IsNullOrEmpty(currentQuestion))
                 {
-                    // Eğer session'da son soru varsa onu al
                     currentQuestion = session.QAHistory.LastOrDefault()?.Question ?? "Soru bulunamadı";
                 }
 
-                // Bir sonraki soruyu ve geri bildirimi al
                 var (nextQuestion, feedback) = await _geminiService.GenerateNextSokratikAsync(session, answer);
 
-                // Mevcut soru-cevabı kaydet
                 session.QAHistory.Add(new SokratikQA
                 {
                     Question = currentQuestion,
@@ -96,7 +90,6 @@ namespace EgitimMaskotuApp.Controllers
 
                 session.QuestionCount++;
 
-                // Eğer bittiise veya maksimum sayıya ulaştıysak
                 if (nextQuestion == "BİTTİ" || session.QuestionCount >= session.MaxQuestions)
                 {
                     session.IsActive = false;
@@ -104,7 +97,6 @@ namespace EgitimMaskotuApp.Controllers
                     return RedirectToAction("Summary");
                 }
 
-                // Session'ı güncelle
                 HttpContext.Session.SetString("SokratikSession", JsonSerializer.Serialize(session));
 
                 var viewModel = new SokratikChatViewModel

@@ -71,8 +71,8 @@ namespace EgitimMaskotuApp.Services
             }
         }
 
-        // Münazara konusu analizi - İyileştirilmiş parsing
-        public async Task<(string konu, string kullaniciTarafi, string aiTarafi)> AnalyzeMunazaraTopicAsync(string rawTopic)
+        
+        public async Task<(string konu, string kullaniciTarafi, string aiTarafi)> AnalyzeMunazaraTopicAsync(string rawTopic)//Münazara konusu prompt
         {
             var prompt = $@"
 Kullanıcı şu münazara konusunu verdi: '{rawTopic}'
@@ -95,12 +95,12 @@ AI_TARAFI: Sosyal medya gençlere zararlıdır
 
             var response = await SendRequestAsync(prompt);
 
-            // İyileştirilmiş parsing
+            
             var konu = ExtractValueImproved(response, "KONU:");
             var kullaniciTarafi = ExtractValueImproved(response, "KULLANICI_TARAFI:");
             var aiTarafi = ExtractValueImproved(response, "AI_TARAFI:");
 
-            // Eğer parsing başarısız olursa varsayılan değerler
+            //error durumunda default topicler
             if (string.IsNullOrWhiteSpace(konu))
                 konu = rawTopic;
             if (string.IsNullOrWhiteSpace(kullaniciTarafi))
@@ -111,8 +111,8 @@ AI_TARAFI: Sosyal medya gençlere zararlıdır
             return (konu, kullaniciTarafi, aiTarafi);
         }
 
-        // Münazara yanıtı
-        public async Task<string> GenerateMunazaraResponseAsync(MunazaraSession session, string userMessage)
+        
+        public async Task<string> GenerateMunazaraResponseAsync(MunazaraSession session, string userMessage)//rakip prompt
         {
             var conversationHistory = string.Join("\n", session.Messages.Select(m =>
                 $"{(m.Speaker == "user" ? "Kullanıcı" : "AI")}: {m.Content}"));
@@ -141,8 +141,8 @@ Yanıtın:
             return await SendRequestAsync(prompt);
         }
 
-        // Münazara sonucu değerlendirmesi - İyileştirilmiş parsing
-        public async Task<MunazaraResult> EvaluateMunazaraAsync(MunazaraSession session)
+        
+        public async Task<MunazaraResult> EvaluateMunazaraAsync(MunazaraSession session)//Hakem Prompt
         {
             var conversationHistory = string.Join("\n", session.Messages.Select(m =>
                 $"{(m.Speaker == "user" ? "Kullanıcı" : "AI")}: {m.Content}"));
@@ -203,7 +203,7 @@ DETAYLI_ANALIZ: Kullanıcı konuyu iyi savundu...
                 DetailedAnalysis = ExtractValueImproved(response, "DETAYLI_ANALIZ:")
             };
 
-            // Varsayılan değerler
+            
             if (string.IsNullOrWhiteSpace(result.Winner))
                 result.Winner = "Berabere";
             if (result.UserScore == 0)
@@ -218,8 +218,8 @@ DETAYLI_ANALIZ: Kullanıcı konuyu iyi savundu...
             return result;
         }
 
-        // Sokratik öğretim için ilk soru
-        public async Task<string> GenerateFirstSokratikQuestionAsync(string topic)
+        
+        public async Task<string> GenerateFirstSokratikQuestionAsync(string topic)//Öğretmen ilk soru prompt 
         {
             var prompt = $@"
 Sen bir öğretmensin ve '{topic}' konusunu Sokratik yöntemle öğreteceksin.
@@ -240,8 +240,8 @@ Sadece soruyu yaz, ek açıklama yapma:
             return await SendRequestAsync(prompt);
         }
 
-        // Sokratik öğretim devam sorusu
-        public async Task<(string nextQuestion, string feedback)> GenerateNextSokratikAsync(SokratikSession session, string answer)
+        
+        public async Task<(string nextQuestion, string feedback)> GenerateNextSokratikAsync(SokratikSession session, string answer)//Öğretmen devamı prompt
         {
             var history = string.Join("\n", session.QAHistory.Select(qa =>
                 $"S: {qa.Question}\nC: {qa.Answer}"));
@@ -285,8 +285,7 @@ Eğer konu yeterince işlendiyse SONRAKİ_SORU kısmına 'BİTTİ' yaz.
             if (string.IsNullOrWhiteSpace(text) || string.IsNullOrWhiteSpace(prefix))
                 return "";
 
-            // Düzeltilmiş Regex: Sadece etiketten sonra aynı satır sonuna kadar olan kısmı alır.
-            // Bu, API'nin formatlama farklılıklarına karşı daha dayanıklıdır.
+            
             var pattern = $@"^{Regex.Escape(prefix)}\s*(.*)";
             var match = Regex.Match(text, pattern, RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
@@ -295,7 +294,7 @@ Eğer konu yeterince işlendiyse SONRAKİ_SORU kısmına 'BİTTİ' yaz.
                 return match.Groups[1].Value.Trim();
             }
 
-            return ""; // Eşleşme bulunamazsa boş string dön.
+            return ""; 
         }
 
         private int ExtractScoreImproved(string text, string prefix)
@@ -303,10 +302,10 @@ Eğer konu yeterince işlendiyse SONRAKİ_SORU kısmına 'BİTTİ' yaz.
             var scoreText = ExtractValueImproved(text, prefix);
             if (int.TryParse(scoreText, out int score))
             {
-                // Puanın 0-100 aralığında kalmasını garantile
+                
                 return Math.Max(0, Math.Min(100, score));
             }
-            // Puan ayrıştırılamazsa 0 döndür. Bu, bir hata olduğunu gösterir.
+            
             return 0;
         }
 
@@ -322,11 +321,11 @@ Eğer konu yeterince işlendiyse SONRAKİ_SORU kısmına 'BİTTİ' yaz.
                            .ToList();
         }
 
-        // Services/GeminiApiService.cs - AI Agent metodlarını ekleyin
+        
 
-        // ========== AI AGENT METODLARI ==========
+        //AI AGENT KISMI 
 
-        // Ana yol haritası üretimi
+        //Ana yol haritası prompt
         public async Task<GeneratedRoadmap> GenerateRoadmapAsync(RoadmapGenerationRequest request)
         {
             var prompt = $@"
@@ -376,7 +375,7 @@ KONU_1_2: AI Türleri | Zayıf AI, Güçlü AI ve türleri | Kolay | 25 | AI tü
             return ParseGeneratedRoadmap(response);
         }
 
-        // Spesifik konu için detaylı açıklama üretimi
+        //yol haritasında açıklama prompt
         public async Task<string> GenerateTopicExplanationAsync(string topic, string userLevel, string context = "")
         {
             var prompt = $@"
@@ -397,7 +396,7 @@ Sadece açıklamayı yaz, ek etiket veya format kullanma:
             return await SendRequestAsync(prompt);
         }
 
-        // Video arama için YouTube query üretimi
+        //Youtube arama prompt
         public async Task<(string query, string expectedTitle)> GenerateVideoSearchAsync(string topic)
         {
             var prompt = $@"
@@ -426,7 +425,7 @@ Sadece formatı kullan:
             return (query, title);
         }
 
-        // Makale arama için sorgu üretimi
+       //makale arama promptu
         public async Task<(string query, string expectedTitle)> GenerateArticleSearchAsync(string topic)
         {
             var prompt = $@"
@@ -455,7 +454,7 @@ Sadece formatı kullan:
             return (query, title);
         }
 
-        // Öğrenme önerisi üretimi
+        //Eğitim Maskotu öneri prompt
         public async Task<string> GenerateLearningRecommendationAsync(AIAgentSession session)
         {
             var completedTopics = string.Join(", ", session.Nodes
@@ -486,7 +485,6 @@ Sadece önerinizi yazın:
             return await SendRequestAsync(prompt);
         }
 
-        // Progress analizi
         public async Task<string> GenerateProgressAnalysisAsync(AIAgentSession session, List<UserProgress> userProgresses)
         {
             var totalNodes = session.Nodes.Count;
@@ -517,7 +515,6 @@ Maksimum 3 cümle, Türkçe:
             return await SendRequestAsync(prompt);
         }
 
-        // Parsing metodları
         private GeneratedRoadmap ParseGeneratedRoadmap(string response)
         {
             var roadmap = new GeneratedRoadmap();
@@ -612,7 +609,7 @@ Maksimum 3 cümle, Türkçe:
             return response;
         }
 
-        public async Task<QuizGenerationResponse> GenerateQuizAsync(string topic, string userLevel, int questionCount = 10)
+        public async Task<QuizGenerationResponse> GenerateQuizAsync(string topic, string userLevel, int questionCount = 10)//çoktan seçmeli prompt
         {
             var prompt = $@"
         'Aşağıdaki '{topic}' konusu hakkında, {userLevel} seviyesindeki bir kullanıcı için {questionCount} soruluk çoktan seçmeli bir test hazırla.
@@ -647,7 +644,7 @@ Maksimum 3 cümle, Türkçe:
             catch (Exception ex)
             {
                 Console.WriteLine($"[DEBUG] Gemini Quiz JSON Parse Hatası: {ex.Message}");
-                return new QuizGenerationResponse(); // Hata durumunda boş bir sınav döndür
+                return new QuizGenerationResponse(); //boş sınav verirse, error vermiş demektir.
             }
         }
     }
