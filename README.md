@@ -3,7 +3,8 @@
 # EĞİTİM MASKOTU
 
 
- **Canlı Uygulama:** [Website](egitimmaskotu-bqgnbcg9h8adhxbz.westeurope-01.azurewebsites.net)
+ **Canlı Uygulama:** [Website]([egitimmaskotu-bqgnbcg9h8adhxbz.westeurope-01.azurewebsites.net](https://egitimmaskotu-bqgnbcg9h8adhxbz.westeurope.azurewebsites.net
+))
 
 
 ---
