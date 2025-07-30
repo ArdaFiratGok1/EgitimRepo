@@ -3,7 +3,7 @@
 # Proje Adı: EĞİTİM MASKOTU
 
 
- **Canlı Uygulama:** [Website](https://egitimmaskotu-bqgnbcg9h8adhxbz.westeurope-01.azurewebsites.net/Home)
+ **Canlı Uygulama:** [Eğitim Maskotu](https://egitimmaskotu-bqgnbcg9h8adhxbz.westeurope-01.azurewebsites.net/Home)
 
 
 ---
