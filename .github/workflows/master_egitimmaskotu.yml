@@ -25,12 +25,16 @@ jobs:
       - name: Publish app
         run: dotnet publish -c Release -o publish
 
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_689AE3B78E7446E986AEC00CA9A9AB44 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_26A84E6EDFE84FBA9ED751853E6F2873 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A90E0B3DF16341CC896A8DC30791C636 }}
+
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'EgitimMaskotu'
           slot-name: 'Production'
           package: publish
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_689AE3B78E7446E986AEC00CA9A9AB44 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_26A84E6EDFE84FBA9ED751853E6F2873 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A90E0B3DF16341CC896A8DC30791C636 }}
