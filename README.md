@@ -1,9 +1,9 @@
 <img width="1696" height="670" alt="Ekran görüntüsü 2025-07-31 005904" src="https://github.com/user-attachments/assets/661bda79-aaef-4364-aac6-74c1830de840" />
 
-# Proje Adı
+# EĞİTİM MASKOTU
 
 
-[Web URL] | [YouTube Link]
+egitimmaskotu-bqgnbcg9h8adhxbz.westeurope-01.azurewebsites.net | [YouTube Link]
 
 ---
 
