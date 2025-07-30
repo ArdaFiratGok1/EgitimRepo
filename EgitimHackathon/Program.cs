@@ -15,13 +15,13 @@ builder.Services.AddScoped<GeminiApiService>();
 
 builder.Services.AddSingleton<YouTubeService>(sp =>
     new YouTubeService(configuration["ApiKeys:YouTube"])
-);//Bu serviste sadece API anahtarý aldýðý için singleton olmasý daha mantýklý.
+);
 
 
 
 builder.Services.AddHttpClient<CoreApiService>((serviceProvider, client) =>
 {
-    // Base URL'i de burada ayarlayabiliriz, ama servisin içinde de kalabilir, þimdilik kalsýn burada
+    // Base URL'i de burada ayarlanabilir, ama servisin içinde de kalabilir, þimdilik kalsýn burada
 
     // client.BaseAddress = new Uri("https://api.core.ac.uk/v3/");
 });
