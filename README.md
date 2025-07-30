@@ -1,4 +1,4 @@
-<img width="1696" height="670" alt="Ekran görüntüsü 2025-07-31 005904" src="https://github.com/user-attachments/assets/661bda79-aaef-4364-aac6-74c1830de840" />
+<img width="963" height="454" alt="image" src="https://github.com/user-attachments/assets/3689394e-784f-4051-a977-dbd2143eb905" />
 
 # EĞİTİM MASKOTU
 
