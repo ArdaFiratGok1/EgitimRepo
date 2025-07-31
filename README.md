@@ -31,7 +31,7 @@ Her modülün tamamlanmasının ardından, kullanıcı o modüle özel çoktan s
 Kullanıcı, **İlerleme Raporu** sayfası üzerinden; bitirdiği modülleri, testlerdeki başarı durumunu (doğru/yanlış sayıları), test tamamlama süresini ve yol haritasında geçirdiği toplam süreyi takip edebilir.
 
 > **Kullanılan API'ler:**  
-> - Modül içerikleri ve test sorularının oluşturulmasında: **Gemini API**  
+> - Modül içerikleri ve test sorularının oluşturulmasında: **Gemini API**  (2.5 flash)
 > - Video kaynakları için: **YouTube Data API v3**  
 > - Makaleler için: **CORE API**
 
@@ -44,7 +44,7 @@ Bu adımda Eğitim Maskotu, kullanıcı için sanal bir öğretmen deneyimi suna
 **Sokratik yöntem** esas alınarak geliştirilen bu yapı, kullanıcının hazır cevaplar yerine konuyu gerçekten anlamasını ve kendi düşünsel süreciyle sonuca ulaşmasını hedefler. Öğrenci konuyu bilmiyorsa, öğretmen ilgili noktaları sadeleştirerek açıklar ve eksik bilgileri tamamlamaya çalışır. Böylece klasik bir sınavdan ziyade rehberli, öğretici bir etkileşim deneyimi oluşur.
 
 > **Kullanılan API:**  
-> - Sanal öğretmen: **Gemini API**
+> - Sanal öğretmen: **Gemini API** (2.5 flash)
 
 ---
 <img width="1176" height="669" alt="Ekran görüntüsü 2025-07-31 010106" src="https://github.com/user-attachments/assets/ae4e37b1-8254-408c-8af3-5eee1d093338" />
@@ -57,7 +57,7 @@ Yapay zekâ, argümanları **mantıksal tutarlılık**, **ifade yetkinliği** ve
 Bu süreç, yalnızca bilgilerin tekrar edilmesini değil; aynı zamanda **eleştirel düşünme**, **argüman oluşturma** ve **iletişim becerilerinin** gelişmesini de hedefler.
 
 > **Kullanılan API'ler:**  
-> - Münazara rakibi ve hakemi: **Gemini API**
+> - Münazara rakibi ve hakemi: **Gemini API** (2.5 flash)
 
 
 ---
