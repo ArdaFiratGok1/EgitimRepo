@@ -3,8 +3,9 @@
 # Proje Adı: EĞİTİM MASKOTU
 
 
- **Canlı Uygulama:** [Eğitim Maskotu](https://egitimmaskotu-bqgnbcg9h8adhxbz.westeurope-01.azurewebsites.net/Home)
+ **Canlı Uygulama:** [Eğitim Maskotu Web](https://egitimmaskotu-bqgnbcg9h8adhxbz.westeurope-01.azurewebsites.net/Home)
 
+ **1dklık tanıtım videosu:** [Eğitim Maskotu Video](https://youtu.be/Y6nGZx2reQU)
 
 ---
 
