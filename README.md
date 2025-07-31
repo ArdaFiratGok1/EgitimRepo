@@ -78,10 +78,12 @@ Bu süreç, yalnızca bilgilerin tekrar edilmesini değil; aynı zamanda **eleş
 ```plaintext
 Kullanıcı (Tarayıcı)
   ↔ Azure App Service (ASP.NET Core MVC)
+    ├─ Models
+       └─ In-Memory Session
     ├─ Controllers
     ├─ Views
     ├─ Services (GeminiApiService, AIAgentContentService [YouTubeService ve CoreApiService])
-    └─ In-Memory Session
+    
 
 Dış Sistemler: Google Gemini, YouTube API, Core API
 ```
