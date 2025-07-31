@@ -1,6 +1,6 @@
 <img width="963" height="454" alt="image" src="https://github.com/user-attachments/assets/3689394e-784f-4051-a977-dbd2143eb905" />
 
-# Proje Adı: EĞİTİM MASKOTU
+# Proje Adı: Eğitim Maskotu
 
 
  **Canlı Uygulama:** [Eğitim Maskotu Web](https://egitimmaskotu-bqgnbcg9h8adhxbz.westeurope-01.azurewebsites.net/Home)
