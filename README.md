@@ -1,9 +1,9 @@
 <img width="963" height="454" alt="image" src="https://github.com/user-attachments/assets/3689394e-784f-4051-a977-dbd2143eb905" />
 
-# EĞİTİM MASKOTU
+# Proje Adı: EĞİTİM MASKOTU
 
 
- **Canlı Uygulama:** [Website](https://egitimmaskotu-bqgnbcg9h8adhxbz.westeurope-01.azurewebsites.net/Home)
+ **Canlı Uygulama:** [Eğitim Maskotu](https://egitimmaskotu-bqgnbcg9h8adhxbz.westeurope-01.azurewebsites.net/Home)
 
 
 ---
@@ -78,10 +78,12 @@ Bu süreç, yalnızca bilgilerin tekrar edilmesini değil; aynı zamanda **eleş
 ```plaintext
 Kullanıcı (Tarayıcı)
   ↔ Azure App Service (ASP.NET Core MVC)
+    ├─ Models
+       └─ In-Memory Session
     ├─ Controllers
     ├─ Views
     ├─ Services (GeminiApiService, AIAgentContentService [YouTubeService ve CoreApiService])
-    └─ In-Memory Session
+    
 
 Dış Sistemler: Google Gemini, YouTube API, Core API
 ```
